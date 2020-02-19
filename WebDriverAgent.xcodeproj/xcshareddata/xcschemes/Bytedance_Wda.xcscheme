@@ -5,49 +5,26 @@
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
-      <BuildActionEntries>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "04EC817122A516BB004B93DF"
-               BuildableName = "Bytedance_Wda.xctest"
-               BlueprintName = "Bytedance_Wda"
-               ReferencedContainer = "container:WebDriverAgent.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-      </BuildActionEntries>
    </BuildAction>
    <TestAction
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "04EC817122A516BB004B93DF"
-            BuildableName = "Bytedance_Wda.xctest"
-            BlueprintName = "Bytedance_Wda"
-            ReferencedContainer = "container:WebDriverAgent.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <Testables>
          <TestableReference
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "04EC817122A516BB004B93DF"
+               BlueprintIdentifier = "EEF988291C486603005CA669"
                BuildableName = "Bytedance_Wda.xctest"
                BlueprintName = "Bytedance_Wda"
                ReferencedContainer = "container:WebDriverAgent.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
+      <AdditionalOptions>
+      </AdditionalOptions>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -59,37 +36,8 @@
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "04EC817122A516BB004B93DF"
-            BuildableName = "Bytedance_Wda.xctest"
-            BlueprintName = "Bytedance_Wda"
-            ReferencedContainer = "container:WebDriverAgent.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "USE_PORT"
-            value = "$(USE_PORT)"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "UPGRADE_TIMESTAMP"
-            value = "$(UPGRADE_TIMESTAMP)"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "MJPEG_SERVER_PORT"
-            value = "$(MJPEG_SERVER_PORT)"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "WDA_PRODUCT_BUNDLE_IDENTIFIER"
-            value = "$(WDA_PRODUCT_BUNDLE_IDENTIFIER)"
-            isEnabled = "YES">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
+      <AdditionalOptions>
+      </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -97,15 +45,6 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "04EC817122A516BB004B93DF"
-            BuildableName = "Bytedance_Wda.xctest"
-            BlueprintName = "Bytedance_Wda"
-            ReferencedContainer = "container:WebDriverAgent.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

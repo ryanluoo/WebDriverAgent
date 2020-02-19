@@ -1,0 +1,26 @@
+dependencies: \
+  /Users/gtf-beijing/gtf/WebDriverAgent/WebDriverAgentLib/Categories/XCElementSnapshot+FBHelpers.m \
+  /Users/gtf-beijing/gtf/WebDriverAgent/WebDriverAgentLib/Categories/XCElementSnapshot+FBHelpers.h \
+  /Users/gtf-beijing/gtf/WebDriverAgent/PrivateHeaders/XCTest/XCElementSnapshot.h \
+  /Users/gtf-beijing/gtf/WebDriverAgent/PrivateHeaders/XCTest/CDStructures.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework/Modules/module.modulemap \
+  /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS13.0.sdk/usr/include/libxml2/module.modulemap \
+  /Users/gtf-beijing/gtf/WebDriverAgent/WebDriverAgentLib/Commands/FBFindElementCommands.h \
+  /Users/gtf-beijing/gtf/WebDriverAgent/WebDriverAgentLib/Routing/FBCommandHandler.h \
+  /Users/gtf-beijing/gtf/WebDriverAgent/WebDriverAgentLib/Routing/FBCommandStatus.h \
+  /Users/gtf-beijing/gtf/WebDriverAgent/WebDriverAgentLib/Routing/FBResponsePayload.h \
+  /Users/gtf-beijing/gtf/WebDriverAgent/WebDriverAgentLib/Routing/FBRoute.h \
+  /Users/gtf-beijing/gtf/WebDriverAgent/WebDriverAgentLib/Utilities/FBRunLoopSpinner.h \
+  /Users/gtf-beijing/gtf/WebDriverAgent/WebDriverAgentLib/Utilities/FBLogger.h \
+  /Users/gtf-beijing/gtf/WebDriverAgent/WebDriverAgentLib/Utilities/FBXCAXClientProxy.h \
+  /Users/gtf-beijing/gtf/WebDriverAgent/PrivateHeaders/XCTest/XCAccessibilityElement.h \
+  /Users/gtf-beijing/gtf/WebDriverAgent/PrivateHeaders/XCTest/XCTestDriver.h \
+  /Users/gtf-beijing/gtf/WebDriverAgent/PrivateHeaders/XCTest/XCDebugLogDelegate-Protocol.h \
+  /Users/gtf-beijing/gtf/WebDriverAgent/PrivateHeaders/XCTest/XCTestDriverInterface-Protocol.h \
+  /Users/gtf-beijing/gtf/WebDriverAgent/PrivateHeaders/XCTest/XCTestManager_TestsInterface-Protocol.h \
+  /Users/gtf-beijing/gtf/WebDriverAgent/PrivateHeaders/XCTest/XCTestManager_IDEInterface-Protocol.h \
+  /Users/gtf-beijing/gtf/WebDriverAgent/PrivateHeaders/XCTest/XCTestManager_ManagerInterface-Protocol.h \
+  /Users/gtf-beijing/gtf/WebDriverAgent/WebDriverAgentLib/Utilities/XCTestPrivateSymbols.h \
+  /Users/gtf-beijing/gtf/WebDriverAgent/PrivateHeaders/XCTest/XCUIElement.h \
+  /Users/gtf-beijing/gtf/WebDriverAgent/WebDriverAgentLib/Categories/XCUIElement+FBWebDriverAttributes.h \
+  /Users/gtf-beijing/gtf/WebDriverAgent/WebDriverAgentLib/Routing/FBElement.h

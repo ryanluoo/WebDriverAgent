@@ -18,6 +18,7 @@
 #import "FBW3CActionsSynthesizer.h"
 #import "FBXCTestDaemonsProxy.h"
 #import "XCEventGenerator.h"
+#import "XCPointerEventPath.h"
 
 #if !TARGET_OS_TV
 
@@ -34,6 +35,7 @@
 - (BOOL)fb_performActionsWithSynthesizerType:(Class)synthesizerType actions:(NSArray *)actions elementCache:(FBElementCache *)elementCache error:(NSError **)error
 {
   FBBaseActionsSynthesizer *synthesizer = [[synthesizerType alloc] initWithActions:actions forApplication:self elementCache:elementCache error:error];
+//  FBBaseActionsSynthesizer *newSynthesizer = [FBBaseActionsSynthesizer alloc]initWithActions:@[@{@"option": @"tap" }] forApplication:nil elementCache:nil error:error];
   if (nil == synthesizer) {
     return NO;
   }
@@ -41,6 +43,7 @@
   if (nil == eventRecord) {
     return [self.class handleEventSynthesWithError:*error];
   }
+  
   return [self fb_synthesizeEvent:eventRecord error:error];
 }
 

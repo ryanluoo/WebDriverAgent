@@ -9,6 +9,9 @@
 
 #import "FBXCodeCompatibility.h"
 
+#import "FBConfiguration.h"
+#import "FBErrorBuilder.h"
+#import "FBLogger.h"
 #import "XCUIElementQuery.h"
 
 static BOOL FBShouldUseOldElementRootSelector = NO;
@@ -54,8 +57,6 @@ NSString *const FBApplicationMethodNotSupportedException = @"FBApplicationMethod
 
 static BOOL FBShouldUseOldAppWithPIDSelector = NO;
 static dispatch_once_t onceAppWithPIDToken;
-static BOOL FBCanUseActivate = NO;
-static dispatch_once_t onceActivate;
 @implementation XCUIApplication (FBCompatibility)
 
 + (instancetype)fb_applicationWithPID:(pid_t)processID
@@ -71,9 +72,6 @@ static dispatch_once_t onceActivate;
 
 - (void)fb_activate
 {
-  if (!self.fb_isActivateSupported) {
-    [[NSException exceptionWithName:FBApplicationMethodNotSupportedException reason:@"'activate' method is not supported by the current iOS SDK" userInfo:@{}] raise];
-  }
   [self activate];
 }
 
@@ -82,31 +80,14 @@ static dispatch_once_t onceActivate;
   return [[self valueForKey:@"state"] intValue];
 }
 
-- (BOOL)fb_isActivateSupported
-{
-  dispatch_once(&onceActivate, ^{
-    FBCanUseActivate = [self respondsToSelector:@selector(activate)];
-  });
-  return FBCanUseActivate;
-}
-
 @end
 
 
-static BOOL FBShouldUseFirstMatchSelector = NO;
-static dispatch_once_t onceFirstMatchToken;
 @implementation XCUIElementQuery (FBCompatibility)
 
 - (XCUIElement *)fb_firstMatch
 {
-  dispatch_once(&onceFirstMatchToken, ^{
-    // Unfortunately, firstMatch property does not work properly if
-    // the lookup is not executed in application context:
-    // https://github.com/appium/appium/issues/10101
-    //    FBShouldUseFirstMatchSelector = [self respondsToSelector:@selector(firstMatch)];
-    FBShouldUseFirstMatchSelector = NO;
-  });
-  if (FBShouldUseFirstMatchSelector) {
+  if (FBConfiguration.useFirstMatch) {
     XCUIElement* result = self.firstMatch;
     return result.exists ? result : nil;
   }
@@ -114,6 +95,40 @@ static dispatch_once_t onceFirstMatchToken;
     return nil;
   }
   return self.allElementsBoundByAccessibilityElement.firstObject;
+}
+
+- (XCElementSnapshot *)fb_elementSnapshotForDebugDescription
+{
+  if ([self respondsToSelector:@selector(elementSnapshotForDebugDescription)]) {
+    return [self elementSnapshotForDebugDescription];
+  }
+  if ([self respondsToSelector:@selector(elementSnapshotForDebugDescriptionWithNoMatchesMessage:)]) {
+    return [self elementSnapshotForDebugDescriptionWithNoMatchesMessage:nil];
+  }
+  @throw [[FBErrorBuilder.builder withDescription:@"Cannot retrieve element snapshots for debug description. Please contact Appium developers"] build];
+  return nil;
+}
+
+@end
+
+
+@implementation XCUIElement (FBCompatibility)
+
+- (void)fb_nativeResolve
+{
+  if ([self respondsToSelector:@selector(resolve)]) {
+    [self resolve];
+    return;
+  }
+  if ([self respondsToSelector:@selector(resolveOrRaiseTestFailure)]) {
+    @try {
+      [self resolveOrRaiseTestFailure];
+    } @catch (NSException *e) {
+      [FBLogger logFmt:@"Failure while resolving '%@': %@", self.description, e.reason];
+    }
+    return;
+  }
+  @throw [[FBErrorBuilder.builder withDescription:@"Cannot resolve elements. Please contact Appium developers"] build];
 }
 
 @end

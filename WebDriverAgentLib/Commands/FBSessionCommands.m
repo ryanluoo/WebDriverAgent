@@ -27,6 +27,10 @@ static NSString* const MJPEG_SERVER_FRAMERATE = @"mjpegServerFramerate";
 static NSString* const MJPEG_SCALING_FACTOR = @"mjpegScalingFactor";
 static NSString* const MJPEG_COMPRESSION_FACTOR = @"mjpegCompressionFactor";
 static NSString* const SCREENSHOT_QUALITY = @"screenshotQuality";
+static NSString* const KEYBOARD_AUTOCORRECTION = @"keyboardAutocorrection";
+static NSString* const KEYBOARD_PREDICTION = @"keyboardPrediction";
+static NSString* const SNAPSHOT_TIMEOUT = @"snapshotTimeout";
+static NSString* const USE_FIRST_MATCH = @"useFirstMatch";
 
 @implementation FBSessionCommands
 
@@ -100,7 +104,7 @@ static NSString* const SCREENSHOT_QUALITY = @"screenshotQuality";
     [XCUIApplicationProcessDelay disableEventLoopDelay];
   }
 
-  [FBConfiguration setShouldWaitForQuiescence:[requirements[@"shouldWaitForQuiescence"] boolValue]];
+  [FBConfiguration setShouldWaitForQuiescence:NO];
 
   FBApplication *app = [[FBApplication alloc] initPrivateWithPath:appPath bundleID:bundleID];
   app.fb_shouldWaitForQuiescence = FBConfiguration.shouldWaitForQuiescence;
@@ -190,7 +194,7 @@ static NSString* const SCREENSHOT_QUALITY = @"screenshotQuality";
       @"ios" :
         @{
           @"simulatorVersion" : [[UIDevice currentDevice] systemVersion],
-          @"ip" : [XCUIDevice sharedDevice].fb_wifiIPAddress ?: [NSNull null],
+          @"ip" : [XCUIDevice sharedDevice].fb_wifiIPAddress ?: [NSNull null]
         },
       @"build" : buildInfo.copy
     }
@@ -215,6 +219,10 @@ static NSString* const SCREENSHOT_QUALITY = @"screenshotQuality";
       MJPEG_SERVER_FRAMERATE: @([FBConfiguration mjpegServerFramerate]),
       MJPEG_SCALING_FACTOR: @([FBConfiguration mjpegScalingFactor]),
       SCREENSHOT_QUALITY: @([FBConfiguration screenshotQuality]),
+      KEYBOARD_AUTOCORRECTION: @([FBConfiguration keyboardAutocorrection]),
+      KEYBOARD_PREDICTION: @([FBConfiguration keyboardPrediction]),
+      SNAPSHOT_TIMEOUT: @([FBConfiguration snapshotTimeout]),
+      USE_FIRST_MATCH: @([FBConfiguration useFirstMatch]),
     }
   );
 }
@@ -242,6 +250,18 @@ static NSString* const SCREENSHOT_QUALITY = @"screenshotQuality";
   }
   if ([settings objectForKey:MJPEG_SCALING_FACTOR]) {
     [FBConfiguration setMjpegScalingFactor:[[settings objectForKey:MJPEG_SCALING_FACTOR] unsignedIntegerValue]];
+  }
+  if ([settings objectForKey:KEYBOARD_AUTOCORRECTION]) {
+    [FBConfiguration setKeyboardAutocorrection:[[settings objectForKey:KEYBOARD_AUTOCORRECTION] boolValue]];
+  }
+  if ([settings objectForKey:KEYBOARD_PREDICTION]) {
+    [FBConfiguration setKeyboardPrediction:[[settings objectForKey:KEYBOARD_PREDICTION] boolValue]];
+  }
+  if ([settings objectForKey:SNAPSHOT_TIMEOUT]) {
+    [FBConfiguration setSnapshotTimeout:[[settings objectForKey:SNAPSHOT_TIMEOUT] doubleValue]];
+  }
+  if ([settings objectForKey:USE_FIRST_MATCH]) {
+    [FBConfiguration setUseFirstMatch:[[settings objectForKey:USE_FIRST_MATCH] boolValue]];
   }
 
   return [self handleGetSettings:request];

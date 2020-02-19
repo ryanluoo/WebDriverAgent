@@ -223,7 +223,10 @@ static NSString *const FBServerURLEndMarker = @"<-ServerURLHere";
   }];
 
   [self.server get:@"/wda/shutdown" withBlock:^(RouteRequest *request, RouteResponse *response) {
-    [response respondWithString:@"Shutting down"];
+    NSDictionary *dict = @{@"status" : @(0)};
+    NSData *data = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
+    [response respondWithData:data];
+
     [self.delegate webServerDidRequestShutdown:self];
   }];
 

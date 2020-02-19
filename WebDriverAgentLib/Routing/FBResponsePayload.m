@@ -38,6 +38,11 @@ id<FBResponsePayload> FBResponseWithCachedElement(XCUIElement *element, FBElemen
   return FBResponseWithStatus(FBCommandStatusNoError, FBDictionaryResponseWithElement(element, elementUUID, compact));
 }
 
+id<FBResponsePayload> FBResponseWithKIFObject(id object)
+{
+  return [[FBResponseJSONPayload alloc] initWithDictionary:object];
+}
+
 id<FBResponsePayload> FBResponseWithCachedElements(NSArray<XCUIElement *> *elements, FBElementCache *elementCache, BOOL compact)
 {
   NSMutableArray *elementsResponse = [NSMutableArray array];

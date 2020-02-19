@@ -27,7 +27,7 @@ id<FBResponsePayload> FBResponseWithOK(void);
  Returns 'FBCommandStatusNoError' response payload with given 'object'
  */
 id<FBResponsePayload> FBResponseWithObject(id object);
-
+id<FBResponsePayload> FBResponseWithKIFObject(id object);
 /**
  Returns 'FBCommandStatusNoError' response payload with given 'element', which will be also cached in 'elementCache'
  */

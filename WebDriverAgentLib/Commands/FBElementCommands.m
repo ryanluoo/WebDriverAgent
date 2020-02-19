@@ -39,15 +39,18 @@
 #import "XCUIElement.h"
 #import "XCUIElementQuery.h"
 #import "FBXCodeCompatibility.h"
+
 #import "FBScreenHelper.h"
-#import <objc/runtime.h>
-#import "XCUIScreen.h"
-#import "XCAXClient_iOS.h"
-#import "XCEventGenerator.h"
+#import "XCSynthesizedEventRecord.h"
+#import "XCPointerEventPath.h"
+#import "FBXCTestDaemonsProxy.h"
+#import <CoreTelephony/CTTelephonyNetworkInfo.h>
+
 
 @interface FBElementCommands ()
 @end
 
+static NSTimeInterval Default_Tap_Offset = 0.1;
 @implementation FBElementCommands
 
 #pragma mark - <FBCommandHandler>
@@ -86,7 +89,7 @@
     [[FBRoute POST:@"/wda/dragfromtoScale"] respondWithTarget:self action:@selector(handleDragWithScale:)],
     [[FBRoute POST:@"/wda/dragfromtoforduration"] respondWithTarget:self action:@selector(handleDragCoordinate:)],
     [[FBRoute POST:@"/wda/tap/:uuid"] respondWithTarget:self action:@selector(handleTap:)],
-        [[FBRoute POST:@"/wda/tapScale/:uuid"] respondWithTarget:self action:@selector(handleTapWithScale:)],
+    [[FBRoute POST:@"/wda/tapScale/:uuid"] respondWithTarget:self action:@selector(handleTapWithScale:)],
     [[FBRoute POST:@"/wda/touchAndHold"] respondWithTarget:self action:@selector(handleTouchAndHoldCoordinate:)],
     [[FBRoute POST:@"/wda/doubleTap"] respondWithTarget:self action:@selector(handleDoubleTapCoordinate:)],
     [[FBRoute POST:@"/wda/pickerwheel/:uuid/select"] respondWithTarget:self action:@selector(handleWheelSelect:)],
@@ -125,6 +128,10 @@
 
 + (id<FBResponsePayload>)handleGetText:(FBRouteRequest *)request
 {
+  CTTelephonyNetworkInfo *networkInfo = [[CTTelephonyNetworkInfo alloc] init];
+  if (networkInfo) {
+    
+  }
   FBElementCache *elementCache = request.session.elementCache;
   XCUIElement *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
   id text = FBFirstNonEmptyValue(element.wdValue, element.wdLabel);
@@ -273,9 +280,41 @@
 + (id<FBResponsePayload>)handleDoubleTapCoordinate:(FBRouteRequest *)request
 {
   CGPoint doubleTapPoint = CGPointMake((CGFloat)[request.arguments[@"x"] doubleValue], (CGFloat)[request.arguments[@"y"] doubleValue]);
-  XCUICoordinate *doubleTapCoordinate = [self.class gestureCoordinateWithCoordinate:doubleTapPoint application:request.session.activeApplication shouldApplyOrientationWorkaround:isSDKVersionLessThan(@"11.0")];
-  [doubleTapCoordinate doubleTap];
-  return FBResponseWithOK();
+//  XCUICoordinate *doubleTapCoordinate = [self.class gestureCoordinateWithCoordinate:doubleTapPoint application:request.session.activeApplication shouldApplyOrientationWorkaround:isSDKVersionLessThan(@"11.0")];
+//  [doubleTapCoordinate doubleTap];
+//  CGPoint tapPoint = CGPointMake((CGFloat)[request.arguments[@"x"] doubleValue], (CGFloat)[request.arguments[@"y"] doubleValue]);
+  XCSynthesizedEventRecord *eventRecord = [[XCSynthesizedEventRecord alloc]
+                                            initWithName:@"Single-Finger Touch Action"
+                                            interfaceOrientation:UIDeviceOrientationUnknown];
+  NSMutableArray<XCPointerEventPath *> *result = [NSMutableArray array];
+  XCPointerEventPath *currentPath = [[XCPointerEventPath alloc] initForTouchAtPoint:doubleTapPoint offset:0];
+  [result addObject:currentPath];
+  [currentPath liftUpAtOffset:Default_Tap_Offset];
+  for (XCPointerEventPath *eventPath in result) {
+    [eventRecord addPointerEventPath:eventPath];
+  }
+  NSError *error=nil;
+  [FBXCTestDaemonsProxy synthesizeEventWithRecord:eventRecord error:&error];
+  
+  //sleep(0.2);
+  XCSynthesizedEventRecord *eventRecord1 = [[XCSynthesizedEventRecord alloc]
+                                            initWithName:@"Single-Finger Touch Action"
+                                            interfaceOrientation:UIDeviceOrientationUnknown];
+  NSMutableArray<XCPointerEventPath *> *result1 = [NSMutableArray array];
+  XCPointerEventPath *currentPath1 = [[XCPointerEventPath alloc] initForTouchAtPoint:doubleTapPoint offset:0];
+  [result1 addObject:currentPath1];
+  [currentPath1 liftUpAtOffset:Default_Tap_Offset];
+  for (XCPointerEventPath *eventPath in result1) {
+    [eventRecord1 addPointerEventPath:eventPath];
+  }
+  NSError *error1=nil;
+  [FBXCTestDaemonsProxy synthesizeEventWithRecord:eventRecord1 error:&error1];
+  
+  
+  if (!error && !error1) {
+    return FBResponseWithOK();
+  }
+  return FBResponseWithError(error);
 }
 
 + (id<FBResponsePayload>)handleTwoFingerTap:(FBRouteRequest *)request
@@ -296,19 +335,9 @@
 
 + (id<FBResponsePayload>)handleTouchAndHoldCoordinate:(FBRouteRequest *)request
 {
-  
-  double duration = [request.arguments[@"duration"] doubleValue];
-  //CGSize size = [FBScreenHelper screenSize];
-      double x_pos = (double)[request.arguments[@"x"] doubleValue];
-      double y_pos = (double)[request.arguments[@"y"] doubleValue];
-//  double x_pos = (double)[request.arguments[@"x"] doubleValue] * size.width;
-//  double y_pos = (double)[request.arguments[@"y"] doubleValue] * size.height;
-  CGPoint point = CGPointMake(x_pos, y_pos);
-  
-  [[XCEventGenerator sharedGenerator]pressAtPoint:point forDuration:duration orientation:UIInterfaceOrientationUnknown handler:^(XCSynthesizedEventRecord *record, NSError *error) {
-    [FBLogger verboseLog:error.description];
-  }];
-  
+  CGPoint touchPoint = CGPointMake((CGFloat)[request.arguments[@"x"] doubleValue], (CGFloat)[request.arguments[@"y"] doubleValue]);
+  XCUICoordinate *pressCoordinate = [self.class gestureCoordinateWithCoordinate:touchPoint application:request.session.activeApplication shouldApplyOrientationWorkaround:isSDKVersionLessThan(@"11.0")];
+  [pressCoordinate pressForDuration:[request.arguments[@"duration"] doubleValue]];
   return FBResponseWithOK();
 }
 
@@ -359,57 +388,60 @@
   }
   return FBResponseWithErrorFormat(@"Unsupported scroll type");
 }
-  
-+ (id<FBResponsePayload>)handleDragWithScale:(FBRouteRequest *)request{
-  
-  NSTimeInterval duration = (NSTimeInterval)[request.arguments[@"duration"] doubleValue];
-  if ((duration - 0) < 0.00001 ) {
-    duration = 1;
-  }
-    CGSize size = [FBScreenHelper screenSize];
-    double start_x_offset = (double)[request.arguments[@"fromX"] doubleValue];
-    double start_y_offset = (double)[request.arguments[@"fromY"] doubleValue];
-    
-    double end_x_offset = (double)[request.arguments[@"toX"] doubleValue];
-    double end_y_offset = (double)[request.arguments[@"toY"] doubleValue];
-    
-    CGPoint startPoint = CGPointMake(start_x_offset * size.width, start_y_offset * size.height);
-    CGPoint endPoint = CGPointMake(end_x_offset * size.width, end_y_offset * size.height);
-    
-    [[XCEventGenerator sharedGenerator] pressAtPoint:startPoint forDuration:0 liftAtPoint:endPoint velocity: (500/duration)  orientation:UIInterfaceOrientationUnknown name:nil handler:^(XCSynthesizedEventRecord *record, NSError *error) {
-      [FBLogger verboseLog:error.description];
-    }];
-    return FBResponseWithOK();
-  }
 
 + (id<FBResponsePayload>)handleDragCoordinate:(FBRouteRequest *)request
 {
-  
-  NSTimeInterval duration = (NSTimeInterval)[request.arguments[@"duration"] doubleValue];
-  if ((duration - 0) < 0.00001 ) {
-    duration = 1;
+//  FBSession *session = request.session;
+//  CGPoint startPoint = CGPointMake((CGFloat)[request.arguments[@"fromX"] doubleValue], (CGFloat)[request.arguments[@"fromY"] doubleValue]);
+//  CGPoint endPoint = CGPointMake((CGFloat)[request.arguments[@"toX"] doubleValue], (CGFloat)[request.arguments[@"toY"] doubleValue]);
+//  NSTimeInterval duration = [request.arguments[@"duration"] doubleValue];
+//  XCUICoordinate *endCoordinate = [self.class gestureCoordinateWithCoordinate:endPoint application:session.activeApplication shouldApplyOrientationWorkaround:isSDKVersionLessThan(@"11.0")];
+//  XCUICoordinate *startCoordinate = [self.class gestureCoordinateWithCoordinate:startPoint application:session.activeApplication shouldApplyOrientationWorkaround:isSDKVersionLessThan(@"11.0")];
+//  [startCoordinate pressForDuration:duration thenDragToCoordinate:endCoordinate];
+  CGPoint startPoint = CGPointMake((CGFloat)[request.arguments[@"fromX"] doubleValue], (CGFloat)[request.arguments[@"fromY"] doubleValue]);
+  CGPoint endPoint = CGPointMake((CGFloat)[request.arguments[@"toX"] doubleValue], (CGFloat)[request.arguments[@"toY"] doubleValue]);
+  NSTimeInterval duration = [request.arguments[@"duration"] doubleValue] > 0 ? [request.arguments[@"duration"] doubleValue]: 0.5;
+
+  XCSynthesizedEventRecord *eventRecord = [[XCSynthesizedEventRecord alloc]
+                                            initWithName:@"Single-Finger Touch Action"
+                                            interfaceOrientation:UIDeviceOrientationUnknown];
+
+  XCPointerEventPath *path = [[XCPointerEventPath alloc] initForTouchAtPoint:startPoint offset:0];
+  [path moveToPoint:endPoint atOffset:duration];
+  [eventRecord addPointerEventPath:path];
+
+  NSError *error=nil;
+  [FBXCTestDaemonsProxy synthesizeEventWithRecord:eventRecord error:&error];
+  if (!error) {
+    return FBResponseWithOK();
   }
-  
-  //CGSize size = [FBScreenHelper screenSize];
-  double start_x_offset = (double)[request.arguments[@"fromX"] doubleValue];
-  double start_y_offset = (double)[request.arguments[@"fromY"] doubleValue];
-  
-  double end_x_offset = (double)[request.arguments[@"toX"] doubleValue];
-  double end_y_offset = (double)[request.arguments[@"toY"] doubleValue];
-  
-  //CGSize size = [FBScreenHelper screenSize];
-//  CGPoint startPoint = CGPointMake(start_x_offset * size.width, start_y_offset * size.height);
-//  CGPoint endPoint = CGPointMake(end_x_offset * size.width, end_y_offset * size.height);
-  
-      CGPoint startPoint = CGPointMake(start_x_offset, start_y_offset );
-      CGPoint endPoint = CGPointMake(end_x_offset, end_y_offset);
-  
-  
-  [[XCEventGenerator sharedGenerator] pressAtPoint:startPoint forDuration:0 liftAtPoint:endPoint velocity: (500/duration)  orientation:UIInterfaceOrientationUnknown name:nil handler:^(XCSynthesizedEventRecord *record, NSError *error) {
-    [FBLogger verboseLog:error.description];
-  }];
-  return FBResponseWithOK();
+  return FBResponseWithError(error);
+
 }
+  
++ (id<FBResponsePayload>)handleDragWithScale:(FBRouteRequest *)request{
+    CGSize size = [FBScreenHelper screenSize];
+    CGPoint startPoint = CGPointMake((CGFloat)[request.arguments[@"fromX"] doubleValue] * size.width, (CGFloat)[request.arguments[@"fromY"] doubleValue] * size.height);
+    CGPoint endPoint = CGPointMake((CGFloat)[request.arguments[@"toX"] doubleValue] * size.width, (CGFloat)[request.arguments[@"toY"] doubleValue] * size.height);
+    NSTimeInterval duration = [request.arguments[@"duration"] doubleValue] > 0 ? [request.arguments[@"duration"] doubleValue]: 0.5;
+
+    XCSynthesizedEventRecord *eventRecord = [[XCSynthesizedEventRecord alloc]
+                                              initWithName:@"Single-Finger Touch Action"
+                                              interfaceOrientation:UIDeviceOrientationUnknown];
+
+    XCPointerEventPath *path = [[XCPointerEventPath alloc] initForTouchAtPoint:startPoint offset:0];
+    [path moveToPoint:endPoint atOffset:duration];
+    [eventRecord addPointerEventPath:path];
+
+    NSError *error=nil;
+    [FBXCTestDaemonsProxy synthesizeEventWithRecord:eventRecord error:&error];
+    if (!error) {
+      return FBResponseWithOK();
+    }
+    return FBResponseWithError(error);
+    
+}
+
 
 + (id<FBResponsePayload>)handleDrag:(FBRouteRequest *)request
 {
@@ -447,27 +479,62 @@
     }
     return FBResponseWithOK();
 }
-  
-  + (id<FBResponsePayload>)handleTapWithScale:(FBRouteRequest *)request{
-    double x_offset = (CGFloat)[request.arguments[@"x"] doubleValue];
-    double y_offset = (CGFloat)[request.arguments[@"y"] doubleValue];
-    CGSize size = [FBScreenHelper screenSize];
-    CGPoint tapPoint = CGPointMake(x_offset * size.width, y_offset * size.height);
-    [[XCEventGenerator sharedGenerator]pressAtPoint:tapPoint forDuration:0.1 orientation:UIInterfaceOrientationUnknown handler:^(XCSynthesizedEventRecord *record, NSError *error) {
-      [FBLogger verboseLog:error.description];
-    }];
-    return FBResponseWithOK();
-  }
 
 + (id<FBResponsePayload>)handleTap:(FBRouteRequest *)request
 {
-  double x_offset = (CGFloat)[request.arguments[@"x"] doubleValue];
-  double y_offset = (CGFloat)[request.arguments[@"y"] doubleValue];
-  CGPoint tapPoint = CGPointMake(x_offset,  y_offset);
-  [[XCEventGenerator sharedGenerator]pressAtPoint:tapPoint forDuration:0.1 orientation:UIInterfaceOrientationUnknown handler:^(XCSynthesizedEventRecord *record, NSError *error) {
-    [FBLogger verboseLog:error.description];
-  }];
-  return FBResponseWithOK();
+//  FBElementCache *elementCache = request.session.elementCache;
+//  CGPoint tapPoint = CGPointMake((CGFloat)[request.arguments[@"x"] doubleValue], (CGFloat)[request.arguments[@"y"] doubleValue]);
+//  XCUIElement *element = [elementCache elementForUUID:request.parameters[@"uuid"]];
+//  if (nil == element) {
+//    XCUICoordinate *tapCoordinate = [self.class gestureCoordinateWithCoordinate:tapPoint application:request.session.activeApplication shouldApplyOrientationWorkaround:isSDKVersionLessThan(@"11.0")];
+//    [tapCoordinate tap];
+//  } else {
+//    NSError *error;
+//    if (![element fb_tapCoordinate:tapPoint error:&error]) {
+//      return FBResponseWithError(error);
+//    }
+//  }
+
+  CGPoint tapPoint = CGPointMake((CGFloat)[request.arguments[@"x"] doubleValue], (CGFloat)[request.arguments[@"y"] doubleValue]);
+  XCSynthesizedEventRecord *eventRecord = [[XCSynthesizedEventRecord alloc]
+                                            initWithName:@"Single-Finger Touch Action"
+                                            interfaceOrientation:UIDeviceOrientationUnknown];
+  NSMutableArray<XCPointerEventPath *> *result = [NSMutableArray array];
+  XCPointerEventPath *currentPath = [[XCPointerEventPath alloc] initForTouchAtPoint:tapPoint offset:0];
+  [result addObject:currentPath];
+  [currentPath liftUpAtOffset:Default_Tap_Offset];
+  for (XCPointerEventPath *eventPath in result) {
+    [eventRecord addPointerEventPath:eventPath];
+  }
+  NSError *error=nil;
+  [FBXCTestDaemonsProxy synthesizeEventWithRecord:eventRecord error:&error];
+  if (!error) {
+    return FBResponseWithOK();
+  }
+  return FBResponseWithError(error);
+}
+  
+  
++ (id<FBResponsePayload>)handleTapWithScale:(FBRouteRequest *)request{
+  CGSize size = [FBScreenHelper screenSize];
+  CGPoint tapPoint = CGPointMake((CGFloat)[request.arguments[@"x"] doubleValue] * size.width, (CGFloat)[request.arguments[@"y"] doubleValue] * size.height);
+  XCSynthesizedEventRecord *eventRecord = [[XCSynthesizedEventRecord alloc]
+                                            initWithName:@"Single-Finger Touch Action"
+                                            interfaceOrientation:UIDeviceOrientationUnknown];
+  NSMutableArray<XCPointerEventPath *> *result = [NSMutableArray array];
+  XCPointerEventPath *currentPath = [[XCPointerEventPath alloc] initForTouchAtPoint:tapPoint offset:0];
+  [result addObject:currentPath];
+  [currentPath liftUpAtOffset:Default_Tap_Offset];
+  for (XCPointerEventPath *eventPath in result) {
+    [eventRecord addPointerEventPath:eventPath];
+  }
+  NSError *error=nil;
+  [FBXCTestDaemonsProxy synthesizeEventWithRecord:eventRecord error:&error];
+  if (!error) {
+    return FBResponseWithOK();
+  }
+  return FBResponseWithError(error);
+  
 }
 
 + (id<FBResponsePayload>)handlePinch:(FBRouteRequest *)request
@@ -517,13 +584,15 @@
 #if TARGET_OS_TV
   CGSize screenSize = request.session.activeApplication.frame.size;
 #else
-  CGRect frame = request.session.activeApplication.wdFrame;
+  FBApplication *app = request.session.activeApplication;
+  CGRect frame = app.frame;
   CGSize screenSize = FBAdjustDimensionsForApplication(frame.size, request.session.activeApplication.interfaceOrientation);
 #endif
   return FBResponseWithStatus(FBCommandStatusNoError, @{
     @"width": @(screenSize.width),
     @"height": @(screenSize.height),
   });
+  
 }
 
 + (id<FBResponsePayload>)handleElementScreenshot:(FBRouteRequest *)request
@@ -647,3 +716,4 @@ static const CGFloat DEFAULT_OFFSET = (CGFloat)0.2;
 #endif
 
 @end
+

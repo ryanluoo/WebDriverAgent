@@ -57,7 +57,7 @@ static bool fb_isLocked;
   // So if we don't wait here it will be interpreted as double home button gesture and go to application switcher instead.
   // On 9.3 pressButton:XCUIDeviceButtonHome can be slightly delayed.
   // Causing waitUntilApplicationBoardIsVisible not to work properly in some edge cases e.g. like starting session right after this call, while being on home screen
-  //[[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:FBHomeButtonCoolOffTime]];
+//  [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:FBHomeButtonCoolOffTime]];
 //  if (![[FBSpringboardApplication fb_springboard] fb_waitUntilApplicationBoardIsVisible:error]) {
 //    return NO;
 //  }
