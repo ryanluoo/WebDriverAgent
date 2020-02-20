@@ -68,6 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
  @return Device screenshot as PNG-encoded data or nil in case of failure
  */
 - (nullable NSData *)fb_screenshotWithError:(NSError*__autoreleasing*)error;
++ (BOOL)fb_canScreenshots;
 
 /**
  Returns device current wifi ip4 address

@@ -20,6 +20,7 @@
 #import "FBXCTestDaemonsProxy.h"
 #import "XCUIScreen.h"
 #import "FBImageIOScaler.h"
+#import "XCUIDevice+FBHelpers.h"
 
 static const NSTimeInterval SCREENSHOT_TIMEOUT = 0.5;
 static const NSUInteger MAX_FPS = 60;
@@ -34,6 +35,8 @@ static const char *QUEUE_NAME = "JPEG Screenshots Provider Queue";
 @property (nonatomic, readonly) NSMutableArray<GCDAsyncSocket *> *activeClients;
 @property (nonatomic, readonly) mach_timebase_info_data_t timebaseInfo;
 @property (nonatomic, readonly) FBImageIOScaler *imageScaler;
+@property (assign) BOOL supportPrivateScreenshot;
+@property (assign) BOOL supportPublicScreenshot;
 
 @end
 
@@ -52,6 +55,19 @@ static const char *QUEUE_NAME = "JPEG Screenshots Provider Queue";
     });
     _imageScaler = [[FBImageIOScaler alloc] init];
   }
+  
+  self.supportPrivateScreenshot = NO;
+  if ([self.class canStreamScreenshots]) {
+    [FBLogger log:@"MJPEG server can use private api"];
+    self.supportPrivateScreenshot = YES;
+  }
+  
+  self.supportPublicScreenshot = NO;
+  if  ([XCUIDevice fb_canScreenshots]){
+    [FBLogger log:@"MJPEG server can use public api"];
+    self.supportPublicScreenshot = YES;
+  }
+
   return self;
 }
 
@@ -73,12 +89,15 @@ static const char *QUEUE_NAME = "JPEG Screenshots Provider Queue";
 
 - (void)streamScreenshot
 {
-  if (![self.class canStreamScreenshots]) {
+  if (self.supportPrivateScreenshot == NO && self.supportPublicScreenshot == NO) {
     [FBLogger log:@"MJPEG server cannot start because the current iOS version is not supported"];
     return;
   }
 
   NSUInteger framerate = FBConfiguration.mjpegServerFramerate;
+  if (self.supportPrivateScreenshot == NO) {
+    framerate = 10;
+  }
   uint64_t timerInterval = (uint64_t)(1.0 / ((0 == framerate || framerate > MAX_FPS) ? MAX_FPS : framerate) * NSEC_PER_SEC);
   uint64_t timeStarted = mach_absolute_time();
   @synchronized (self.activeClients) {
@@ -100,20 +119,29 @@ static const char *QUEUE_NAME = "JPEG Screenshots Provider Queue";
   if (usesScaling) {
     compressionQuality = FBMaxScalingFactor;
   }
-  id<XCTestManager_ManagerInterface> proxy = [FBXCTestDaemonsProxy testRunnerProxy];
-  dispatch_semaphore_t sem = dispatch_semaphore_create(0);
-  [proxy _XCT_requestScreenshotOfScreenWithID:[[XCUIScreen mainScreen] displayID]
-                                       withRect:CGRectNull
-                                            uti:(__bridge id)kUTTypeJPEG
-                             compressionQuality:compressionQuality
-                                      withReply:^(NSData *data, NSError *error) {
-    if (error != nil) {
-      [FBLogger logFmt:@"Error taking screenshot: %@", [error description]];
-    }
-    screenshotData = data;
-    dispatch_semaphore_signal(sem);
-  }];
-  dispatch_semaphore_wait(sem, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(SCREENSHOT_TIMEOUT * NSEC_PER_SEC)));
+  
+  if (self.supportPrivateScreenshot == YES){
+      id<XCTestManager_ManagerInterface> proxy = [FBXCTestDaemonsProxy testRunnerProxy];
+      dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+      [proxy _XCT_requestScreenshotOfScreenWithID:[[XCUIScreen mainScreen] displayID]
+                                           withRect:CGRectNull
+                                                uti:(__bridge id)kUTTypeJPEG
+                                 compressionQuality:compressionQuality
+                                          withReply:^(NSData *data, NSError *error) {
+        if (error != nil) {
+          [FBLogger logFmt:@"Error taking screenshot: %@", [error description]];
+        }
+        screenshotData = data;
+        dispatch_semaphore_signal(sem);
+      }];
+      dispatch_semaphore_wait(sem, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(SCREENSHOT_TIMEOUT * NSEC_PER_SEC)));
+  } else if (self.supportPublicScreenshot == YES) {
+    NSError *error;
+    screenshotData = [[XCUIDevice sharedDevice] fb_screenshotWithError:&error];
+  } else {
+    screenshotData = nil;
+  }
+  
   if (nil == screenshotData) {
     [self scheduleNextScreenshotWithInterval:timerInterval timeStarted:timeStarted];
     return;

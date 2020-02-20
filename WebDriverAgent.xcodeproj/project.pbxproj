@@ -2596,7 +2596,7 @@
 					};
 					EEF988291C486603005CA669 = {
 						CreatedOnToolsVersion = 7.2;
-						DevelopmentTeam = 2V25P94L6B;
+						DevelopmentTeam = AX6M5DMPGB;
 						ProvisioningStyle = Manual;
 					};
 				};
@@ -3621,7 +3621,7 @@
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Manual;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 2V25P94L6B;
+				DEVELOPMENT_TEAM = AX6M5DMPGB;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -3635,7 +3635,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.Bytedance_Wda;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = gtf.2V25P94L6B;
+				PROVISIONING_PROFILE_SPECIFIER = any;
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				USES_XCTRUNNER = YES;
 			};
@@ -3647,7 +3647,7 @@
 			buildSettings = {
 				CLANG_STATIC_ANALYZER_MODE = deep;
 				CODE_SIGN_STYLE = Manual;
-				DEVELOPMENT_TEAM = 2V25P94L6B;
+				DEVELOPMENT_TEAM = AX6M5DMPGB;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -3661,7 +3661,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.Bytedance_Wda;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE_SPECIFIER = gtf.2V25P94L6B;
+				PROVISIONING_PROFILE_SPECIFIER = any;
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				USES_XCTRUNNER = YES;
 			};

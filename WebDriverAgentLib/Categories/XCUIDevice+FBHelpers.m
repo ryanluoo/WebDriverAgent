@@ -126,6 +126,16 @@ static bool fb_isLocked;
   return [XCUIScreen.mainScreen screenshotDataForQuality:quality rect:rect error:error];
 }
 
++ (BOOL)fb_canScreenshots
+{
+  static dispatch_once_t onceCanScreenshot;
+  static BOOL result;
+  dispatch_once(&onceCanScreenshot, ^{
+    result = [XCUIScreen.mainScreen respondsToSelector:@selector(screenshotDataForQuality:rect:error:)];
+  });
+  return result;
+}
+
 - (BOOL)fb_fingerTouchShouldMatch:(BOOL)shouldMatch
 {
   const char *name;
