@@ -138,6 +138,9 @@ static const char *QUEUE_NAME = "JPEG Screenshots Provider Queue";
   } else if (self.supportPublicScreenshot == YES) {
     NSError *error;
     screenshotData = [[XCUIDevice sharedDevice] fb_screenshotWithError:&error];
+    if (error != nil) {
+      [FBLogger logFmt:@"Error taking screenshot: %@", [error description]];
+    }
   } else {
     screenshotData = nil;
   }
