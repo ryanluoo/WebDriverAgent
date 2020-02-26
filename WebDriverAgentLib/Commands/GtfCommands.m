@@ -62,22 +62,7 @@ BOOL haveAlbumAuthorization() {
 
 + (id<FBResponsePayload>)handleAlbumAdd:(FBRouteRequest *)request
 {
-  if (!supportAlbumAccess()) {
-   [FBLogger logFmt:@"Gtf add ablum failed! Ablum access not supported"];
-    return FBResponseWithStatus(FBCommandStatusUnsupported, @{
-      @"result": @"AddAablum failed! Ablum access not supported",
-    });
-  }
-  
-  if (!haveAlbumAuthorization()) {
-    [FBLogger logFmt:@"Gtf add ablum failed! Ablum access denied. Need to authorize WDA first"];
-    return FBResponseWithStatus(FBCommandStatusMethodNotAllowed, @{
-      @"result": @"Add ablum failed! Ablum access denied. Need to authorize WDA first",
-    });
-  }
-  
   NSString *fileName = request.URL.lastPathComponent;
-
   [FBLogger logFmt:@"Gtf adding file to ablbum: %@", fileName];
   NSURL *fileUrl = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject] URLByAppendingPathComponent:fileName];
   if (![[NSFileManager defaultManager] fileExistsAtPath:[fileUrl path]]) {
@@ -87,11 +72,28 @@ BOOL haveAlbumAuthorization() {
     });
   }
   
+  if (!supportAlbumAccess()) {
+    [FBLogger logFmt:@"Gtf add ablum failed! Ablum access not supported"];
+    [[NSFileManager defaultManager] removeItemAtURL:fileUrl error:nil];
+    return FBResponseWithStatus(FBCommandStatusUnsupported, @{
+      @"result": @"AddAablum failed! Ablum access not supported",
+    });
+  }
+  
+  if (!haveAlbumAuthorization()) {
+    [FBLogger logFmt:@"Gtf add ablum failed! Ablum access denied. Need to authorize WDA first"];
+    [[NSFileManager defaultManager] removeItemAtURL:fileUrl error:nil];
+    return FBResponseWithStatus(FBCommandStatusMethodNotAllowed, @{
+      @"result": @"Add ablum failed! Ablum access denied. Need to authorize WDA first",
+    });
+  }
+  
   NSString *fileType = [fileName.pathExtension lowercaseString];
   BOOL isImage = [@[@"jpg", @"jpeg", @"png"] containsObject:fileType];
   BOOL isVideo = [@[@"mp4", @"mov"] containsObject:fileType];
   if (!isImage && !isVideo) {
     [FBLogger logFmt:@"Gtf add ablum failed! Unsupported file type"];
+    [[NSFileManager defaultManager] removeItemAtURL:fileUrl error:nil];
     return FBResponseWithStatus(FBCommandStatusInvalidArgument, @{
       @"result": @"Add album failed! Unsupported file type",
     });
@@ -108,11 +110,13 @@ BOOL haveAlbumAuthorization() {
   
   if (error != nil) {
     [FBLogger logFmt:@"Gtf add ablum failed! %@", error.description];
-    return FBResponseWithStatus(FBCommandStatusInvalidArgument, @{
+    [[NSFileManager defaultManager] removeItemAtURL:fileUrl error:nil];
+    return FBResponseWithStatus(FBCommandStatusUnhandled, @{
       @"result": [NSString stringWithFormat:@"Add album failed! %@", error.description],
     });
   } else {
     [FBLogger logFmt:@"Gtf add ablum succeeded"];
+    [[NSFileManager defaultManager] removeItemAtURL:fileUrl error:nil];
     return FBResponseWithStatus(FBCommandStatusNoError, @{
       @"result": @"Add album succeeded",
     });
