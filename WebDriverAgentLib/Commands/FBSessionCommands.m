@@ -40,6 +40,7 @@ static NSString* const USE_FIRST_MATCH = @"useFirstMatch";
 {
   return
   @[
+//    [[FBRoute POST:@"/window/size"].withoutSession respondWithTarget:self action:@selector(handleOpenURL:)],
     [[FBRoute POST:@"/url"] respondWithTarget:self action:@selector(handleOpenURL:)],
     [[FBRoute POST:@"/session"].withoutSession respondWithTarget:self action:@selector(handleCreateSession:)],
     [[FBRoute POST:@"/wda/apps/launch"] respondWithTarget:self action:@selector(handleSessionAppLaunch:)],

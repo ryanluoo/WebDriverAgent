@@ -20,5 +20,9 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>GTF needs to write your photo library</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>GTF needs to access your photo library</string>
 </dict>
 </plist>

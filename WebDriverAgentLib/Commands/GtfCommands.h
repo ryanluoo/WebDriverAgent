@@ -1,17 +1,18 @@
 //
-//  FBKIFCommands.h
+//  GtfCommands.h
 //  WebDriverAgentLib
 //
-//  Created by cheney on 2019/9/10.
-//  Copyright © 2019 Facebook. All rights reserved.
+//  Created by ryan on 2020/2/25.
+//  Copyright © 2020 Facebook. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
+
 #import <WebDriverAgentLib/FBCommandHandler.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FBKIFCommands : NSObject <FBCommandHandler>
+@interface GtfCommands : NSObject <FBCommandHandler>
 
 @end
 

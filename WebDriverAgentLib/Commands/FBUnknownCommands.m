@@ -15,11 +15,6 @@
 
 #pragma mark - <FBCommandHandler>
 
-+ (BOOL)shouldRegisterAutomatically
-{
-  return NO;
-}
-
 + (NSArray *)routes
 {
   return
