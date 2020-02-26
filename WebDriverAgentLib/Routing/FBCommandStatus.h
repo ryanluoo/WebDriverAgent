@@ -43,4 +43,11 @@ typedef NS_ENUM(NSUInteger, FBCommandStatus){
     FBCommandStatusRotationNotAllowed = 777, // Rotation not allowed
     FBCommandStatusApplicationDeadlockDetected = 888, // Application deadlock detected
     FBCommandStatusApplicationCrashDetected = 889,  // Application crash detected
+    //Gtf Commands
+    GtfCommandStatusAlbumFileNotExist = 2001,
+    GtfCommandStatusAlbumNotSupported = 2002,
+    GtfCommandStatusAlbumUnauthorized = 2003,
+    GtfCommandStatusAlbumFileTypeUnknown = 2004,
+    GtfCommandStatusAlbumChangeFailed = 2005,
+  
 };
