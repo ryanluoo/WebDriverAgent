@@ -12,6 +12,7 @@
 #import "FBApplication.h"
 #import <XCTest/XCUIDevice.h>
 #import <Photos/Photos.h>
+#import <LocalAuthentication/LocalAuthentication.h>
 
 @implementation GtfCommands
 
@@ -22,6 +23,7 @@
   return
   @[
     [[FBRoute GET:@"/gtf/window/size"].withoutSession respondWithTarget:self action:@selector(handleWindowSize:)],
+    [[FBRoute GET:@"/gtf/password/status"].withoutSession respondWithTarget:self action:@selector(handlePasswordStatus:)],
     [[FBRoute POST:@"/gtf/album/*"].withoutSession respondWithTarget:self action:@selector(handleAlbumAdd:)],
   ];
 }
@@ -120,6 +122,16 @@ BOOL haveAlbumAuthorization() {
     return FBResponseWithStatus(FBCommandStatusNoError, @{
       @"result": @"Add album succeeded",
     });
+  }
+}
+
++ (id<FBResponsePayload>)handlePasswordStatus:(FBRouteRequest *)request {
+  LAContext *myContext = [[LAContext alloc] init];
+  if ([myContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication error:nil]) {
+    return FBResponseWithStatus(FBCommandStatusNoError, @YES);
+  }
+  else {
+    return FBResponseWithStatus(FBCommandStatusNoError, @NO);
   }
 }
 
