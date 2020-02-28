@@ -35,9 +35,6 @@ static const char *QUEUE_NAME = "JPEG Screenshots Provider Queue";
 @property (nonatomic, readonly) NSMutableArray<GCDAsyncSocket *> *activeClients;
 @property (nonatomic, readonly) mach_timebase_info_data_t timebaseInfo;
 @property (nonatomic, readonly) FBImageIOScaler *imageScaler;
-@property (assign) BOOL supportPrivateScreenshot;
-@property (assign) BOOL supportPublicScreenshot;
-
 @end
 
 
@@ -56,17 +53,7 @@ static const char *QUEUE_NAME = "JPEG Screenshots Provider Queue";
     _imageScaler = [[FBImageIOScaler alloc] init];
   }
   
-  self.supportPrivateScreenshot = NO;
-  if ([self.class canStreamScreenshots]) {
-    [FBLogger log:@"MJPEG server can use private api"];
-    self.supportPrivateScreenshot = YES;
-  }
   
-  self.supportPublicScreenshot = NO;
-  if  ([XCUIDevice fb_canScreenshots]){
-    [FBLogger log:@"MJPEG server can use public api"];
-    self.supportPublicScreenshot = YES;
-  }
 
   return self;
 }
@@ -89,13 +76,23 @@ static const char *QUEUE_NAME = "JPEG Screenshots Provider Queue";
 
 - (void)streamScreenshot
 {
-  if (self.supportPrivateScreenshot == NO && self.supportPublicScreenshot == NO) {
+  BOOL supportPrivateScreenshot = NO;
+  if ([self.class canStreamScreenshots]) {
+    supportPrivateScreenshot = YES;
+  }
+  
+  BOOL supportPublicScreenshot = NO;
+  if  ([XCUIDevice fb_canScreenshots]){
+    supportPublicScreenshot = YES;
+  }
+  
+  if (supportPrivateScreenshot == NO && supportPublicScreenshot == NO) {
     [FBLogger log:@"MJPEG server cannot start because the current iOS version is not supported"];
     return;
   }
 
   NSUInteger framerate = FBConfiguration.mjpegServerFramerate;
-  if (self.supportPrivateScreenshot == NO) {
+  if (supportPrivateScreenshot == NO) {
     framerate = 10;
   }
   uint64_t timerInterval = (uint64_t)(1.0 / ((0 == framerate || framerate > MAX_FPS) ? MAX_FPS : framerate) * NSEC_PER_SEC);
@@ -120,7 +117,7 @@ static const char *QUEUE_NAME = "JPEG Screenshots Provider Queue";
     compressionQuality = FBMaxScalingFactor;
   }
   
-  if (self.supportPrivateScreenshot == YES){
+  if (supportPrivateScreenshot == YES){
       id<XCTestManager_ManagerInterface> proxy = [FBXCTestDaemonsProxy testRunnerProxy];
       dispatch_semaphore_t sem = dispatch_semaphore_create(0);
       [proxy _XCT_requestScreenshotOfScreenWithID:[[XCUIScreen mainScreen] displayID]
@@ -135,7 +132,7 @@ static const char *QUEUE_NAME = "JPEG Screenshots Provider Queue";
         dispatch_semaphore_signal(sem);
       }];
       dispatch_semaphore_wait(sem, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(SCREENSHOT_TIMEOUT * NSEC_PER_SEC)));
-  } else if (self.supportPublicScreenshot == YES) {
+  } else if (supportPublicScreenshot == YES) {
     NSError *error;
     screenshotData = [[XCUIDevice sharedDevice] fb_screenshotWithError:&error];
     if (error != nil) {
