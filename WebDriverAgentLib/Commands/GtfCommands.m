@@ -70,7 +70,7 @@ BOOL haveAlbumAuthorization() {
   if (![[NSFileManager defaultManager] fileExistsAtPath:[fileUrl path]]) {
     [FBLogger logFmt:@"Gtf add ablum failed! File not exist"];
     return FBResponseWithStatus(GtfCommandStatusAlbumFileNotExist, @{
-      @"result": @"Add album failed! File not exist",
+      @"result": @"File not exist",
     });
   }
   
@@ -78,7 +78,7 @@ BOOL haveAlbumAuthorization() {
     [FBLogger logFmt:@"Gtf add ablum failed! Ablum access not supported"];
     [[NSFileManager defaultManager] removeItemAtURL:fileUrl error:nil];
     return FBResponseWithStatus(GtfCommandStatusAlbumNotSupported, @{
-      @"result": @"AddAablum failed! Ablum access not supported",
+      @"result": @"Unsupported",
     });
   }
   
@@ -86,7 +86,7 @@ BOOL haveAlbumAuthorization() {
     [FBLogger logFmt:@"Gtf add ablum failed! Ablum access unauthorized"];
     [[NSFileManager defaultManager] removeItemAtURL:fileUrl error:nil];
     return FBResponseWithStatus(GtfCommandStatusAlbumUnauthorized, @{
-      @"result": @"Add ablum failed! Ablum access unauthorized",
+      @"result": @"Unauthorized",
     });
   }
   
@@ -97,7 +97,7 @@ BOOL haveAlbumAuthorization() {
     [FBLogger logFmt:@"Gtf add ablum failed! Unknown file type"];
     [[NSFileManager defaultManager] removeItemAtURL:fileUrl error:nil];
     return FBResponseWithStatus(GtfCommandStatusAlbumFileTypeUnknown, @{
-      @"result": @"Add album failed! Unknown file type",
+      @"result": @"Unknown file type",
     });
   }
   
@@ -114,13 +114,13 @@ BOOL haveAlbumAuthorization() {
     [FBLogger logFmt:@"Gtf add ablum failed! %@", error.description];
     [[NSFileManager defaultManager] removeItemAtURL:fileUrl error:nil];
     return FBResponseWithStatus(GtfCommandStatusAlbumChangeFailed, @{
-      @"result": [NSString stringWithFormat:@"Add album failed! %@", error.description],
+      @"result": [NSString stringWithFormat:@"Err: %@", error.description],
     });
   } else {
     [FBLogger logFmt:@"Gtf add ablum succeeded"];
     [[NSFileManager defaultManager] removeItemAtURL:fileUrl error:nil];
     return FBResponseWithStatus(FBCommandStatusNoError, @{
-      @"result": @"Add album succeeded",
+      @"result": @"Succeeded",
     });
   }
 }
