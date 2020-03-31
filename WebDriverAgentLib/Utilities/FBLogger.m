@@ -22,7 +22,10 @@
 {
   va_list args;
   va_start(args, format);
-  NSLogv(format, args);
+  NSString * message = [[NSString alloc] initWithFormat:format arguments:args];
+  printf([message cStringUsingEncoding:NSUTF8StringEncoding]);
+  printf("\n");
+//  NSLogv(format, args);
   va_end(args);
 }
 
