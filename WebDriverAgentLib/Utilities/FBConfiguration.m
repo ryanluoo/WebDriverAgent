@@ -17,8 +17,8 @@
 #import "XCElementSnapshot.h"
 #include <dlfcn.h>
 
-static NSUInteger const DefaultStartingPort = 8100;
-static NSUInteger const DefaultMjpegServerPort = 9100;
+static NSUInteger const DefaultStartingPort = 8700;
+static NSUInteger const DefaultMjpegServerPort = 8800;
 static NSUInteger const DefaultPortRange = 100;
 
 static char const *const controllerPrefBundlePath = "/System/Library/PrivateFrameworks/TextInput.framework/TextInput";
