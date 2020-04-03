@@ -7,11 +7,11 @@
       buildImplicitDependencies = "YES">
       <BuildActionEntries>
          <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
+            buildForTesting = "NO"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "EEF988291C486603005CA669"
@@ -29,16 +29,6 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       systemAttachmentLifetime = "keepNever">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "EEF988291C486603005CA669"
-               BuildableName = "WebDriverAgentRunner.xctest"
-               BlueprintName = "WebDriverAgentRunner"
-               ReferencedContainer = "container:WebDriverAgent.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -89,15 +79,6 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "EEF988291C486603005CA669"
-            BuildableName = "WebDriverAgentRunner.xctest"
-            BlueprintName = "WebDriverAgentRunner"
-            ReferencedContainer = "container:WebDriverAgent.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

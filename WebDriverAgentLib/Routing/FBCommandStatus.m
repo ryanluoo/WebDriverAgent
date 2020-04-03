@@ -77,7 +77,6 @@ static NSString *const FB_NO_SUCH_DRIVER_ERROR = @"invalid session id";
 static const HTTPStatusCode FB_NO_SUCH_DRIVER_ERROR_CODE = kHTTPStatusCodeNotFound;
 static NSString *const FB_NO_SUCH_DRIVER_MSG = @"A session is either terminated or not started";
 
-
 @implementation FBCommandStatus
 
 - (instancetype)initWithValue:(nullable id)value

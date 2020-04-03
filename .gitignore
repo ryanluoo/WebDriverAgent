@@ -19,7 +19,7 @@ DerivedData
 !default.mode2v3
 *.perspectivev3
 !default.perspectivev3
-xcuserdata
+#xcuserdata
 
 ## Other
 *.xccheckout
@@ -53,3 +53,4 @@ bundles/
 webdriveragent-*.tar.gz
 uncompressed/
 prebuilt-agents/
+

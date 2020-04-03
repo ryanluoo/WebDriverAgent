@@ -21,6 +21,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) HTTPStatusCode statusCode;
 
 
+- (instancetype)initWithValue:(nullable id)value;
+- (instancetype)initWithError:(NSString *)error
+                   statusCode:(HTTPStatusCode)statusCode
+                      message:(NSString *)message
+                    traceback:(nullable NSString *)traceback;
+
 + (instancetype)ok;
 
 + (instancetype)okWithValue:(nullable id)value;

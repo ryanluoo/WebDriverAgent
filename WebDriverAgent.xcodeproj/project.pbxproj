@@ -6,6 +6,21 @@
 	objectVersion = 51;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		9497E33524337949003864C9 /* GtfWdaAggregate */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 9497E33624337949003864C9 /* Build configuration list for PBXAggregateTarget "GtfWdaAggregate" */;
+			buildPhases = (
+				9497E33B24337A08003864C9 /* ShellScript */,
+			);
+			dependencies = (
+				9497E33A243379AF003864C9 /* PBXTargetDependency */,
+			);
+			name = GtfWdaAggregate;
+			productName = BytedanceWdaAggregate;
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		1357E296233D05240054BDB8 /* XCUIHitPointResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 1357E295233D05240054BDB8 /* XCUIHitPointResult.h */; };
 		1357E297233D05240054BDB8 /* XCUIHitPointResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 1357E295233D05240054BDB8 /* XCUIHitPointResult.h */; };
@@ -414,6 +429,17 @@
 		71BD20741F86116100B36EC2 /* XCUIApplication+FBTouchAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 71BD20721F86116100B36EC2 /* XCUIApplication+FBTouchAction.m */; };
 		71BD20781F869E0F00B36EC2 /* FBAppiumTouchActionsIntegrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 71BD20771F869E0F00B36EC2 /* FBAppiumTouchActionsIntegrationTests.m */; };
 		71DC3003208759E1007671AA /* RoutingHTTPServer.framework in Copy frameworks */ = {isa = PBXBuildFile; fileRef = AD42DD2B1CF1238500806E5D /* RoutingHTTPServer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9497E327243373E8003864C9 /* UITestingUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = EE9AB7FD1CAEE048008C271F /* UITestingUITests.m */; };
+		9497E329243373E8003864C9 /* WebDriverAgentLib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE158A991CBD452B00A3E3F0 /* WebDriverAgentLib.framework */; };
+		9497E32A243373E8003864C9 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 716C9345224D540C004B8542 /* libxml2.tbd */; };
+		9497E32D243373E8003864C9 /* YYCache.framework in Copy frameworks */ = {isa = PBXBuildFile; fileRef = 7155B40C224D5A5F0042A993 /* YYCache.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9497E32E243373E8003864C9 /* RoutingHTTPServer.framework in Copy frameworks */ = {isa = PBXBuildFile; fileRef = AD42DD2B1CF1238500806E5D /* RoutingHTTPServer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9497E32F243373E8003864C9 /* WebDriverAgentLib.framework in Copy frameworks */ = {isa = PBXBuildFile; fileRef = EE158A991CBD452B00A3E3F0 /* WebDriverAgentLib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9497E33E243381B0003864C9 /* GtfCommands.h in Headers */ = {isa = PBXBuildFile; fileRef = 9497E33C243381B0003864C9 /* GtfCommands.h */; };
+		9497E33F243381B0003864C9 /* GtfCommands.m in Sources */ = {isa = PBXBuildFile; fileRef = 9497E33D243381B0003864C9 /* GtfCommands.m */; };
+		9497E35A2436191E003864C9 /* FBCommandStatus+GTF.h in Headers */ = {isa = PBXBuildFile; fileRef = 9497E3582436191E003864C9 /* FBCommandStatus+GTF.h */; };
+		9497E35B2436191E003864C9 /* FBCommandStatus+GTF.m in Sources */ = {isa = PBXBuildFile; fileRef = 9497E3592436191E003864C9 /* FBCommandStatus+GTF.m */; };
+		9497E35F2436ED92003864C9 /* GtfInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9497E35E2436ED92003864C9 /* GtfInfo.plist */; };
 		AD35D01A1CF1418E00870A75 /* RoutingHTTPServer.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = AD42DD2B1CF1238500806E5D /* RoutingHTTPServer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		AD35D0641CF1C2C300870A75 /* RoutingHTTPServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD42DD2B1CF1238500806E5D /* RoutingHTTPServer.framework */; };
 		AD35D06C1CF1C35500870A75 /* WebDriverAgentLib.framework in Copy frameworks */ = {isa = PBXBuildFile; fileRef = EE158A991CBD452B00A3E3F0 /* WebDriverAgentLib.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -702,6 +728,20 @@
 			remoteGlobalIDString = 641EE5D52240C5CA00173FCB;
 			remoteInfo = WebDriverAgentLib_tvOS;
 		};
+		9497E325243373E8003864C9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 91F9DAE11B99DBC2001349B2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EE158A981CBD452B00A3E3F0;
+			remoteInfo = WebDriverAgentLib;
+		};
+		9497E339243379AF003864C9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 91F9DAE11B99DBC2001349B2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 9497E323243373E8003864C9;
+			remoteInfo = BytedanceWdaRunner;
+		};
 		AD8D96F01D3C12960061268E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 91F9DAE11B99DBC2001349B2 /* Project object */;
@@ -784,6 +824,19 @@
 				7155B41F224D5B770042A993 /* YYCache.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9497E32C243373E8003864C9 /* Copy frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				9497E32D243373E8003864C9 /* YYCache.framework in Copy frameworks */,
+				9497E32E243373E8003864C9 /* RoutingHTTPServer.framework in Copy frameworks */,
+				9497E32F243373E8003864C9 /* WebDriverAgentLib.framework in Copy frameworks */,
+			);
+			name = "Copy frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		EE93CFF41CCA501300708122 /* Copy frameworks */ = {
@@ -929,6 +982,13 @@
 		71BD20721F86116100B36EC2 /* XCUIApplication+FBTouchAction.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "XCUIApplication+FBTouchAction.m"; sourceTree = "<group>"; };
 		71BD20771F869E0F00B36EC2 /* FBAppiumTouchActionsIntegrationTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FBAppiumTouchActionsIntegrationTests.m; sourceTree = "<group>"; };
 		71E504941DF59BAD0020C32A /* XCUIElementAttributesTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = XCUIElementAttributesTests.m; sourceTree = "<group>"; };
+		9497E333243373E8003864C9 /* GtfWdaRunner.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GtfWdaRunner.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9497E334243373E9003864C9 /* WebDriverAgentRunner copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "WebDriverAgentRunner copy-Info.plist"; path = "/Users/ryan/workspace/gtf/gtf_wda/WebDriverAgentRunner copy-Info.plist"; sourceTree = "<absolute>"; };
+		9497E33C243381B0003864C9 /* GtfCommands.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GtfCommands.h; sourceTree = "<group>"; };
+		9497E33D243381B0003864C9 /* GtfCommands.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GtfCommands.m; sourceTree = "<group>"; };
+		9497E3582436191E003864C9 /* FBCommandStatus+GTF.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FBCommandStatus+GTF.h"; sourceTree = "<group>"; };
+		9497E3592436191E003864C9 /* FBCommandStatus+GTF.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "FBCommandStatus+GTF.m"; sourceTree = "<group>"; };
+		9497E35E2436ED92003864C9 /* GtfInfo.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; name = GtfInfo.plist; path = WebDriverAgentRunner/GtfInfo.plist; sourceTree = SOURCE_ROOT; };
 		AD42DD2A1CF121E600806E5D /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 		AD42DD2B1CF1238500806E5D /* RoutingHTTPServer.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RoutingHTTPServer.framework; path = Carthage/Build/iOS/RoutingHTTPServer.framework; sourceTree = "<group>"; };
 		AD6C26921CF2379700F8B5FF /* FBAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FBAlert.h; path = WebDriverAgentLib/FBAlert.h; sourceTree = SOURCE_ROOT; };
@@ -1247,6 +1307,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9497E328243373E8003864C9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9497E329243373E8003864C9 /* WebDriverAgentLib.framework in Frameworks */,
+				9497E32A243373E8003864C9 /* libxml2.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EE158A951CBD452B00A3E3F0 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1405,6 +1474,7 @@
 				91F9DAEA1B99DBC2001349B2 /* Products */,
 				B6E83A410C45944B036B6B0F /* Frameworks */,
 				AD42DD291CF121E600806E5D /* Modules */,
+				9497E334243373E9003864C9 /* WebDriverAgentRunner copy-Info.plist */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -1424,6 +1494,7 @@
 				641EE2DA2240BBE300173FCB /* WebDriverAgentRunner_tvOS.xctest */,
 				641EE6F82240C5CA00173FCB /* WebDriverAgentLib_tvOS.framework */,
 				64B264F9228C50E0002A5025 /* UnitTests_tvOS.xctest */,
+				9497E333243373E8003864C9 /* GtfWdaRunner.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1541,6 +1612,8 @@
 		EE9AB74F1CAEDF0C008C271F /* Commands */ = {
 			isa = PBXGroup;
 			children = (
+				9497E33C243381B0003864C9 /* GtfCommands.h */,
+				9497E33D243381B0003864C9 /* GtfCommands.m */,
 				EE9AB7501CAEDF0C008C271F /* FBAlertViewCommands.h */,
 				EE9AB7511CAEDF0C008C271F /* FBAlertViewCommands.m */,
 				EE9AB7521CAEDF0C008C271F /* FBCustomCommands.h */,
@@ -1583,6 +1656,8 @@
 				EE9AB7751CAEDF0C008C271F /* FBCommandHandler.h */,
 				EE9AB7761CAEDF0C008C271F /* FBCommandStatus.h */,
 				71B155DB230711E900646AFB /* FBCommandStatus.m */,
+				9497E3582436191E003864C9 /* FBCommandStatus+GTF.h */,
+				9497E3592436191E003864C9 /* FBCommandStatus+GTF.m */,
 				EE9AB7791CAEDF0C008C271F /* FBElement.h */,
 				EE9AB77B1CAEDF0C008C271F /* FBElementCache.h */,
 				EEC088E41CB56AC000B65968 /* FBElementCache.m */,
@@ -1965,6 +2040,7 @@
 		EEF988341C486655005CA669 /* WebDriverAgentRunner */ = {
 			isa = PBXGroup;
 			children = (
+				9497E35E2436ED92003864C9 /* GtfInfo.plist */,
 				EE9AB7FC1CAEE048008C271F /* Info.plist */,
 				EE9AB7FD1CAEE048008C271F /* UITestingUITests.m */,
 			);
@@ -2225,6 +2301,7 @@
 				EE35AD5D1E3B77D600A02D78 /* XCTNSPredicateExpectationObject-Protocol.h in Headers */,
 				EE158B5F1CBD47A000A3E3F0 /* WebDriverAgentLib.h in Headers */,
 				EE158AC01CBD456F00A3E3F0 /* FBFindElementCommands.h in Headers */,
+				9497E33E243381B0003864C9 /* GtfCommands.h in Headers */,
 				EE35AD551E3B77D600A02D78 /* XCTestRun.h in Headers */,
 				EE158AE61CBD456F00A3E3F0 /* FBWebServer.h in Headers */,
 				EE158AC61CBD456F00A3E3F0 /* FBScreenshotCommands.h in Headers */,
@@ -2370,6 +2447,7 @@
 				714097471FAE1B32008FB2C5 /* FBAppiumActionsSynthesizer.h in Headers */,
 				EE7E271C1D06C69F001BEC7B /* FBDebugLogDelegateDecorator.h in Headers */,
 				EEDFE1211D9C06F800E6FFE5 /* XCUIDevice+FBHealthCheck.h in Headers */,
+				9497E35A2436191E003864C9 /* FBCommandStatus+GTF.h in Headers */,
 				7155D703211DCEF400166C20 /* FBMjpegServer.h in Headers */,
 				EE35AD761E3B77D600A02D78 /* XCUIRecorderNodeFinderMatch.h in Headers */,
 				EE35AD6C1E3B77D600A02D78 /* XCUIApplicationProcess.h in Headers */,
@@ -2447,6 +2525,25 @@
 			productName = WebDriverAgentLib_tvOSTests;
 			productReference = 64B264F9228C50E0002A5025 /* UnitTests_tvOS.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		9497E323243373E8003864C9 /* GtfWdaRunner */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9497E330243373E8003864C9 /* Build configuration list for PBXNativeTarget "GtfWdaRunner" */;
+			buildPhases = (
+				9497E326243373E8003864C9 /* Sources */,
+				9497E328243373E8003864C9 /* Frameworks */,
+				9497E32B243373E8003864C9 /* Resources */,
+				9497E32C243373E8003864C9 /* Copy frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				9497E324243373E8003864C9 /* PBXTargetDependency */,
+			);
+			name = GtfWdaRunner;
+			productName = XCTUITestRunner;
+			productReference = 9497E333243373E8003864C9 /* GtfWdaRunner.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 		EE158A981CBD452B00A3E3F0 /* WebDriverAgentLib */ = {
 			isa = PBXNativeTarget;
@@ -2597,6 +2694,9 @@
 					64B264F8228C50E0002A5025 = {
 						CreatedOnToolsVersion = 10.2.1;
 					};
+					9497E33524337949003864C9 = {
+						CreatedOnToolsVersion = 11.4;
+					};
 					EE158A981CBD452B00A3E3F0 = {
 						CreatedOnToolsVersion = 7.3;
 					};
@@ -2639,6 +2739,8 @@
 				EE5095DD1EBCC9090028E2FE /* IntegrationTests_2 */,
 				EE2202031ECC612200A29571 /* IntegrationTests_3 */,
 				EE9B75D31CF7956C00275851 /* IntegrationApp */,
+				9497E323243373E8003864C9 /* GtfWdaRunner */,
+				9497E33524337949003864C9 /* GtfWdaAggregate */,
 			);
 		};
 /* End PBXProject section */
@@ -2665,10 +2767,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9497E32B243373E8003864C9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EE158A971CBD452B00A3E3F0 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9497E35F2436ED92003864C9 /* GtfInfo.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2716,6 +2826,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		9497E33B24337A08003864C9 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nset -x -e  \nINFO_PATH=\"$BUILT_PRODUCTS_DIR/Bytedance_Wda-Runner.app/Info.plist\"\n/usr/libexec/PlistBuddy -c 'Delete :NSPhotoLibraryUsageDescription' $INFO_PATH || true  \n/usr/libexec/PlistBuddy -c 'Add :NSPhotoLibraryUsageDescription string \"GTF need to access your album\"' $INFO_PATH\n\nTARGET_NAME=\"GtfWdaRunner\"\n/usr/bin/codesign --force --sign \"$CODE_SIGN_IDENTITY\" --entitlements \"$PROJECT_TEMP_DIR/Debug-iphoneos/$TARGET_NAME.build/$TARGET_NAME.xctest.xcent\" --timestamp=none \"$BUILT_PRODUCTS_DIR/$TARGET_NAME-Runner.app\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		641EE2D62240BBE300173FCB /* Sources */ = {
@@ -2828,6 +2958,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9497E326243373E8003864C9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9497E327243373E8003864C9 /* UITestingUITests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		EE158A941CBD452B00A3E3F0 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2843,6 +2981,7 @@
 				71BD20741F86116100B36EC2 /* XCUIApplication+FBTouchAction.m in Sources */,
 				EE158AE71CBD456F00A3E3F0 /* FBWebServer.m in Sources */,
 				31EC77FE224F7D0600380FCD /* XCUIApplicationProcessQuiescence.m in Sources */,
+				9497E33F243381B0003864C9 /* GtfCommands.m in Sources */,
 				715557D4211DBCE700613B26 /* FBTCPSocket.m in Sources */,
 				EE3A18631CDE618F00DE4205 /* FBErrorBuilder.m in Sources */,
 				71A7EAF61E20516B001DA4F2 /* XCUIElement+FBClassChain.m in Sources */,
@@ -2909,6 +3048,7 @@
 				EE158ABF1CBD456F00A3E3F0 /* FBElementCommands.m in Sources */,
 				EE158AD51CBD456F00A3E3F0 /* FBExceptionHandler.m in Sources */,
 				EE5A24421F136D360078B1D9 /* FBXCodeCompatibility.m in Sources */,
+				9497E35B2436191E003864C9 /* FBCommandStatus+GTF.m in Sources */,
 				EEE376421D59F81400ED88DD /* XCElementSnapshot+FBHelpers.m in Sources */,
 				EE158AE91CBD456F00A3E3F0 /* FBElementTypeTransformer.m in Sources */,
 				EE158AF61CBD456F00A3E3F0 /* FBApplication.m in Sources */,
@@ -3043,6 +3183,16 @@
 			isa = PBXTargetDependency;
 			target = 641EE5D52240C5CA00173FCB /* WebDriverAgentLib_tvOS */;
 			targetProxy = 64B264FF228C50E0002A5025 /* PBXContainerItemProxy */;
+		};
+		9497E324243373E8003864C9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EE158A981CBD452B00A3E3F0 /* WebDriverAgentLib */;
+			targetProxy = 9497E325243373E8003864C9 /* PBXContainerItemProxy */;
+		};
+		9497E33A243379AF003864C9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 9497E323243373E8003864C9 /* GtfWdaRunner */;
+			targetProxy = 9497E339243379AF003864C9 /* PBXContainerItemProxy */;
 		};
 		AD8D96F11D3C12960061268E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -3471,6 +3621,87 @@
 			};
 			name = Release;
 		};
+		9497E331243373E8003864C9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EEE5CABF1C80361500CBBDD9 /* ProjectSettings.xcconfig */;
+			buildSettings = {
+				CLANG_STATIC_ANALYZER_MODE = deep;
+				CODE_SIGN_STYLE = Manual;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = AX6M5DMPGB;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				INFOPLIST_FILE = WebDriverAgentRunner/GtfInfo.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-all_load",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.GtfWdaRunner;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = any;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				USES_XCTRUNNER = YES;
+			};
+			name = Debug;
+		};
+		9497E332243373E8003864C9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EEE5CABF1C80361500CBBDD9 /* ProjectSettings.xcconfig */;
+			buildSettings = {
+				CLANG_STATIC_ANALYZER_MODE = deep;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = AX6M5DMPGB;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				INFOPLIST_FILE = WebDriverAgentRunner/GtfInfo.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-all_load",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.GtfWdaRunner;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = any;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
+				USES_XCTRUNNER = YES;
+			};
+			name = Release;
+		};
+		9497E33724337949003864C9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer: Ye Huang (YDJDX5N3L8)";
+				CODE_SIGN_STYLE = Manual;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = any;
+			};
+			name = Debug;
+		};
+		9497E33824337949003864C9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer: Ye Huang (YDJDX5N3L8)";
+				CODE_SIGN_STYLE = Manual;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = any;
+			};
+			name = Release;
+		};
 		EE158A9E1CBD452B00A3E3F0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = EEE5CABF1C80361500CBBDD9 /* ProjectSettings.xcconfig */;
@@ -3893,6 +4124,24 @@
 			buildConfigurations = (
 				91F9DB0A1B99DBC2001349B2 /* Debug */,
 				91F9DB0B1B99DBC2001349B2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9497E330243373E8003864C9 /* Build configuration list for PBXNativeTarget "GtfWdaRunner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9497E331243373E8003864C9 /* Debug */,
+				9497E332243373E8003864C9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9497E33624337949003864C9 /* Build configuration list for PBXAggregateTarget "GtfWdaAggregate" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9497E33724337949003864C9 /* Debug */,
+				9497E33824337949003864C9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
