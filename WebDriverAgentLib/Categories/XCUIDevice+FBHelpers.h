@@ -62,13 +62,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSData *)fb_rawScreenshotWithQuality:(NSUInteger)quality error:(NSError*__autoreleasing*)error;
 
 /**
-Checks if screen shot can be taken using [XCUIScreen.mainScreen screenshotDataForQuality:rect:error:];
-
-@return YES if screen shot can be taken
-*/
-+ (BOOL)fb_canScreenshots;
-
-/**
  Returns screenshot
  @param error If there is an error, upon return contains an NSError object that describes the problem.
  @return Device screenshot as PNG-encoded data or nil in case of failure

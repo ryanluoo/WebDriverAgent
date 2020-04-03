@@ -19,7 +19,6 @@
 #import "FBXCTestDaemonsProxy.h"
 #import "XCUIScreen.h"
 #import "FBImageIOScaler.h"
-#import "XCUIDevice+FBHelpers.h"
 
 static const NSTimeInterval SCREENSHOT_TIMEOUT = 0.5;
 static const NSUInteger MAX_FPS = 60;
@@ -73,7 +72,7 @@ static const char *QUEUE_NAME = "JPEG Screenshots Provider Queue";
 
 - (void)streamScreenshot
 {
-  if (![self.class canStreamScreenshots] && ![XCUIDevice fb_canScreenshots]) {
+  if (![self.class canStreamScreenshots]) {
     [FBLogger log:@"MJPEG server cannot start because the current iOS version is not supported"];
     return;
   }
@@ -98,32 +97,20 @@ static const char *QUEUE_NAME = "JPEG Screenshots Provider Queue";
   // To get the desired compressionQuality we need to do a lossless compression here
   CGFloat screenshotCompressionQuality = usesScaling ? FBMaxCompressionQuality : compressionQuality;
 
-  if ([self.class canStreamScreenshots]) {
-    id<XCTestManager_ManagerInterface> proxy = [FBXCTestDaemonsProxy testRunnerProxy];
-    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
-    [proxy _XCT_requestScreenshotOfScreenWithID:[[XCUIScreen mainScreen] displayID]
-                                         withRect:CGRectNull
-                                              uti:(__bridge id)kUTTypeJPEG
-                               compressionQuality:screenshotCompressionQuality
-                                        withReply:^(NSData *data, NSError *error) {
-      if (error != nil) {
-        [FBLogger logFmt:@"Error taking screenshot: %@", [error description]];
-      }
-      screenshotData = data;
-      dispatch_semaphore_signal(sem);
-    }];
-    dispatch_semaphore_wait(sem, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(SCREENSHOT_TIMEOUT * NSEC_PER_SEC)));
-  } else if ([XCUIDevice fb_canScreenshots]) {
-    NSError *error;
-    screenshotData = [[XCUIDevice sharedDevice] fb_screenshotWithError:&error];
+  id<XCTestManager_ManagerInterface> proxy = [FBXCTestDaemonsProxy testRunnerProxy];
+  dispatch_semaphore_t sem = dispatch_semaphore_create(0);
+  [proxy _XCT_requestScreenshotOfScreenWithID:[[XCUIScreen mainScreen] displayID]
+                                       withRect:CGRectNull
+                                            uti:(__bridge id)kUTTypeJPEG
+                             compressionQuality:screenshotCompressionQuality
+                                      withReply:^(NSData *data, NSError *error) {
     if (error != nil) {
       [FBLogger logFmt:@"Error taking screenshot: %@", [error description]];
-      screenshotData = nil;
     }
-  } else {
-    screenshotData = nil;
-  }
-
+    screenshotData = data;
+    dispatch_semaphore_signal(sem);
+  }];
+  dispatch_semaphore_wait(sem, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(SCREENSHOT_TIMEOUT * NSEC_PER_SEC)));
   if (nil == screenshotData) {
     [self scheduleNextScreenshotWithInterval:timerInterval timeStarted:timeStarted];
     return;
