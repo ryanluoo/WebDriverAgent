@@ -13,6 +13,7 @@
 #import <XCTest/XCUIDevice.h>
 #import <Photos/Photos.h>
 #import <LocalAuthentication/LocalAuthentication.h>
+#import "FBCommandStatus+GTF.h"
 
 @implementation GtfCommands
 
@@ -30,7 +31,7 @@
 
 + (id<FBResponsePayload>)handleWindowSize:(FBRouteRequest *)request
 {
-   return FBResponseWithStatus(FBCommandStatusNoError, @{
+   return FBResponseWithObject(@{
      @"width": @([[UIScreen mainScreen] bounds].size.width),
      @"height": @([[UIScreen mainScreen] bounds].size.height),
    });
@@ -67,27 +68,24 @@ BOOL haveAlbumAuthorization() {
   NSString *fileName = request.URL.lastPathComponent;
   [FBLogger logFmt:@"Gtf adding file to ablbum: %@", fileName];
   NSURL *fileUrl = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject] URLByAppendingPathComponent:fileName];
-  if (![[NSFileManager defaultManager] fileExistsAtPath:[fileUrl path]]) {
+  if (![[NSFileManager defaultManager] fileExistsAtPath:(NSString * _Nonnull)[fileUrl path]]) {
     [FBLogger logFmt:@"Gtf add ablum failed! File not exist"];
-    return FBResponseWithStatus(GtfCommandStatusAlbumFileNotExist, @{
-      @"result": @"File not exist",
-    });
+    return FBResponseWithStatus([FBCommandStatus fileNotExistErrorWithMessage:nil
+                                                                    traceback:nil]);
   }
   
   if (!supportAlbumAccess()) {
     [FBLogger logFmt:@"Gtf add ablum failed! Ablum access not supported"];
     [[NSFileManager defaultManager] removeItemAtURL:fileUrl error:nil];
-    return FBResponseWithStatus(GtfCommandStatusAlbumNotSupported, @{
-      @"result": @"Unsupported",
-    });
+    return FBResponseWithStatus([FBCommandStatus incompatibleErrorWithMessage:nil
+                                                                    traceback:nil]);
   }
   
   if (!haveAlbumAuthorization()) {
     [FBLogger logFmt:@"Gtf add ablum failed! Ablum access unauthorized"];
     [[NSFileManager defaultManager] removeItemAtURL:fileUrl error:nil];
-    return FBResponseWithStatus(GtfCommandStatusAlbumUnauthorized, @{
-      @"result": @"Unauthorized",
-    });
+    return FBResponseWithStatus([FBCommandStatus unauthorizedErrorWithMessage:nil
+                                                                    traceback:nil]);
   }
   
   NSString *fileType = [fileName.pathExtension lowercaseString];
@@ -96,9 +94,8 @@ BOOL haveAlbumAuthorization() {
   if (!isImage && !isVideo) {
     [FBLogger logFmt:@"Gtf add ablum failed! Unknown file type"];
     [[NSFileManager defaultManager] removeItemAtURL:fileUrl error:nil];
-    return FBResponseWithStatus(GtfCommandStatusAlbumFileTypeUnknown, @{
-      @"result": @"Unknown file type",
-    });
+    return FBResponseWithStatus([FBCommandStatus unknownMediaTypeErrorWithMessage:[NSString stringWithFormat:@"unknown media type: %@", fileType]
+                                                                        traceback:nil]);
   }
   
   NSError *error = nil;
@@ -113,25 +110,21 @@ BOOL haveAlbumAuthorization() {
   if (error != nil) {
     [FBLogger logFmt:@"Gtf add ablum failed! %@", error.description];
     [[NSFileManager defaultManager] removeItemAtURL:fileUrl error:nil];
-    return FBResponseWithStatus(GtfCommandStatusAlbumChangeFailed, @{
-      @"result": [NSString stringWithFormat:@"Err: %@", error.description],
-    });
+    return FBResponseWithUnknownError(error);
   } else {
     [FBLogger logFmt:@"Gtf add ablum succeeded"];
     [[NSFileManager defaultManager] removeItemAtURL:fileUrl error:nil];
-    return FBResponseWithStatus(FBCommandStatusNoError, @{
-      @"result": @"Succeeded",
-    });
+    return FBResponseWithOK();
   }
 }
 
 + (id<FBResponsePayload>)handlePasswordStatus:(FBRouteRequest *)request {
   LAContext *myContext = [[LAContext alloc] init];
   if ([myContext canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication error:nil]) {
-    return FBResponseWithStatus(FBCommandStatusNoError, @YES);
+    return FBResponseWithObject(@YES);
   }
   else {
-    return FBResponseWithStatus(FBCommandStatusNoError, @NO);
+    return FBResponseWithObject(@NO);
   }
 }
 

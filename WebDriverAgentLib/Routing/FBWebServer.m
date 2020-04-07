@@ -209,11 +209,7 @@ static NSString *const FBServerURLEndMarker = @"<-ServerURLHere";
 
 - (void)handleException:(NSException *)exception forResponse:(RouteResponse *)response
 {
-  if ([self.exceptionHandler handleException:exception forResponse:response]) {
-    return;
-  }
-  id<FBResponsePayload> payload = FBResponseWithErrorFormat(@"%@\n\n%@", exception.description, exception.callStackSymbols);
-  [payload dispatchWithResponse:response];
+  [self.exceptionHandler handleException:exception forResponse:response];
 }
 
 - (void)registerServerKeyRouteHandlers
@@ -223,10 +219,7 @@ static NSString *const FBServerURLEndMarker = @"<-ServerURLHere";
   }];
 
   [self.server get:@"/wda/shutdown" withBlock:^(RouteRequest *request, RouteResponse *response) {
-    NSDictionary *dict = @{@"status" : @(0)};
-    NSData *data = [NSJSONSerialization dataWithJSONObject:dict options:NSJSONWritingPrettyPrinted error:nil];
-    [response respondWithData:data];
-
+    [response respondWithString:@"Shutting down"];
     [self.delegate webServerDidRequestShutdown:self];
   }];
 

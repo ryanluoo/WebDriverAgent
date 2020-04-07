@@ -21,19 +21,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)fb_waitUntilFrameIsStable;
 
 /**
- Checks if receiver is obstructed by alert
- */
-- (BOOL)fb_isObstructedByAlert;
-
-/**
- Checks if receiver obstructs given element
-
- @param element tested element
- @return YES if receiver obstructs 'element', otherwise NO
- */
-- (BOOL)fb_obstructsElement:(XCUIElement *)element;
-
-/**
  Gets the most recent snapshot of the current element. The element will be
  automatically resolved if the snapshot is not available yet
 
@@ -48,7 +35,17 @@ NS_ASSUME_NONNULL_BEGIN
  
  @return The recent snapshot of the element with the attributes resolved
  */
-- (nullable XCElementSnapshot *)fb_snapshotWithAttributes;
+- (nullable XCElementSnapshot *)fb_snapshotWithAllAttributes;
+
+/**
+ Gets the most recent snapshot of the current element with given attributes resolved.
+ No additional calls to the accessibility layer are required.
+
+ @param attributeNames The list of attribute names to resolve. Must be one of
+ FB_...Name values exported by XCTestPrivateSymbols.h module
+ @return The recent snapshot of the element with the attributes resolved
+*/
+- (nullable XCElementSnapshot *)fb_snapshotWithAttributes:(NSArray<NSString *> *)attributeNames;
 
 /**
  Gets the most recent snapshot of the current element from the query snapshot that found the element.
@@ -65,10 +62,15 @@ NS_ASSUME_NONNULL_BEGIN
  Filters elements by matching them to snapshots from the corresponding array
 
  @param snapshots Array of snapshots to be matched with
+ @param selfUID Optionally the unique identifier of the current element.
+ Providing it as an argument improves the performance of the method.
+ @param onlyChildren Whether to only look for direct element children
 
  @return Array of filtered elements, which have matches in snapshots array
  */
-- (NSArray<XCUIElement *> *)fb_filterDescendantsWithSnapshots:(NSArray<XCElementSnapshot *> *)snapshots;
+- (NSArray<XCUIElement *> *)fb_filterDescendantsWithSnapshots:(NSArray<XCElementSnapshot *> *)snapshots
+                                                      selfUID:(nullable NSString *)selfUID
+                                                 onlyChildren:(BOOL)onlyChildren;
 
 /**
  Waits until element snapshot is stable to avoid "Error copying attributes -25202 error".

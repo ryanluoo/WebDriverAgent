@@ -68,7 +68,8 @@
 {
   NSError *error;
   if (![[XCUIDevice sharedDevice] fb_goToHomescreenWithError:&error]) {
-    return FBResponseWithError(error);
+    return FBResponseWithStatus([FBCommandStatus unknownErrorWithMessage:error.description
+                                                               traceback:nil]);
   }
   return FBResponseWithOK();
 }
@@ -79,7 +80,7 @@
   NSTimeInterval duration = (requestedDuration ? requestedDuration.doubleValue : 3.);
   NSError *error;
   if (![request.session.activeApplication fb_deactivateWithDuration:duration error:&error]) {
-    return FBResponseWithError(error);
+    return FBResponseWithUnknownError(error);
   }
   return FBResponseWithOK();
 }
@@ -93,7 +94,7 @@
 + (id<FBResponsePayload>)handleDismissKeyboardCommand:(FBRouteRequest *)request
 {
 #if TARGET_OS_TV
-  if ([self isKeyboardPresent]) {
+  if ([self isKeyboardPresentForApplication:request.session.activeApplication]) {
     [[XCUIRemote sharedRemote] pressButton: XCUIRemoteButtonMenu];
   }
 #else
@@ -109,19 +110,19 @@
      timeout:5]
     timeoutErrorMessage:errorDescription]
    spinUntilTrue:^BOOL{
-     return ![self isKeyboardPresent];
+     return ![self isKeyboardPresentForApplication:request.session.activeApplication];
    }
    error:&error];
   if (!isKeyboardNotPresent) {
-    return FBResponseWithError(error);
+    return FBResponseWithStatus([FBCommandStatus elementNotVisibleErrorWithMessage:error.description traceback:[NSString stringWithFormat:@"%@", NSThread.callStackSymbols]]);
   }
   return FBResponseWithOK();
 }
 
 #pragma mark - Helpers
 
-+ (BOOL)isKeyboardPresent {
-  XCUIElement *foundKeyboard = [[FBApplication fb_activeApplication].query descendantsMatchingType:XCUIElementTypeKeyboard].fb_firstMatch;
++ (BOOL)isKeyboardPresentForApplication:(XCUIApplication *)application {
+  XCUIElement *foundKeyboard = [application.fb_query descendantsMatchingType:XCUIElementTypeKeyboard].fb_firstMatch;
   return foundKeyboard && foundKeyboard.fb_isVisible;
 }
 
@@ -142,7 +143,7 @@
 {
   NSError *error;
   if (![[XCUIDevice sharedDevice] fb_lockScreen:&error]) {
-    return FBResponseWithError(error);
+    return FBResponseWithUnknownError(error);
   }
   return FBResponseWithOK();
 }
@@ -150,26 +151,63 @@
 + (id<FBResponsePayload>)handleIsLocked:(FBRouteRequest *)request
 {
   BOOL isLocked = [XCUIDevice sharedDevice].fb_isScreenLocked;
-  return FBResponseWithStatus(FBCommandStatusNoError, isLocked ? @YES : @NO);
+  return FBResponseWithObject(isLocked ? @YES : @NO);
 }
 
 + (id<FBResponsePayload>)handleUnlock:(FBRouteRequest *)request
 {
   NSError *error;
   if (![[XCUIDevice sharedDevice] fb_unlockScreen:&error]) {
-    return FBResponseWithError(error);
+    return FBResponseWithUnknownError(error);
   }
   return FBResponseWithOK();
 }
 
 + (id<FBResponsePayload>)handleActiveAppInfo:(FBRouteRequest *)request
 {
-  XCUIApplication *app = FBApplication.fb_activeApplication;
-  return FBResponseWithStatus(FBCommandStatusNoError, @{
+  XCUIApplication *app = request.session.activeApplication ?: FBApplication.fb_activeApplication;
+  return FBResponseWithObject(@{
     @"pid": @(app.processID),
     @"bundleId": app.bundleID,
-    @"name": app.identifier
+    @"name": app.identifier,
+    @"processArguments": [self processArguments:app],
   });
+}
+
+/**
+ * Returns current active app and its arguments of active session
+ *
+ * @return The dictionary of current active bundleId and its process/environment argumens
+ *
+ * @example
+ *
+ *     [self currentActiveApplication]
+ *     //=> {
+ *     //       "processArguments" : {
+ *     //       "env" : {
+ *     //           "HAPPY" : "testing"
+ *     //       },
+ *     //       "args" : [
+ *     //           "happy",
+ *     //           "tseting"
+ *     //       ]
+ *     //   }
+ *
+ *     [self currentActiveApplication]
+ *     //=> {}
+ */
++ (NSDictionary *)processArguments:(XCUIApplication *)app
+{
+  // Can be nil if no active activation is defined by XCTest
+  if (app == nil) {
+    return @{};
+  }
+
+  return
+  @{
+    @"args": app.launchArguments,
+    @"env": app.launchEnvironment
+  };
 }
 
 #if !TARGET_OS_TV
@@ -179,11 +217,11 @@
   NSData *content = [[NSData alloc] initWithBase64EncodedString:(NSString *)request.arguments[@"content"]
                                                         options:NSDataBase64DecodingIgnoreUnknownCharacters];
   if (nil == content) {
-    return FBResponseWithStatus(FBCommandStatusInvalidArgument, @"Cannot decode the pasteboard content from base64");
+    return FBResponseWithStatus([FBCommandStatus invalidArgumentErrorWithMessage:@"Cannot decode the pasteboard content from base64" traceback:nil]);
   }
   NSError *error;
   if (![FBPasteboard setData:content forType:contentType error:&error]) {
-    return FBResponseWithError(error);
+    return FBResponseWithUnknownError(error);
   }
   return FBResponseWithOK();
 }
@@ -194,10 +232,9 @@
   NSError *error;
   id result = [FBPasteboard dataForType:contentType error:&error];
   if (nil == result) {
-    return FBResponseWithError(error);
+    return FBResponseWithUnknownError(error);
   }
-  return FBResponseWithStatus(FBCommandStatusNoError,
-                              [result base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength]);
+  return FBResponseWithObject([result base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength]);
 }
 
 + (id<FBResponsePayload>)handleGetBatteryInfo:(FBRouteRequest *)request
@@ -205,7 +242,7 @@
   if (![[UIDevice currentDevice] isBatteryMonitoringEnabled]) {
     [[UIDevice currentDevice] setBatteryMonitoringEnabled:YES];
   }
-  return FBResponseWithStatus(FBCommandStatusNoError, @{
+  return FBResponseWithObject(@{
     @"level": @([UIDevice currentDevice].batteryLevel),
     @"state": @([UIDevice currentDevice].batteryState)
   });
@@ -216,7 +253,7 @@
 {
   NSError *error;
   if (![XCUIDevice.sharedDevice fb_pressButton:(id)request.arguments[@"name"] error:&error]) {
-    return FBResponseWithError(error);
+    return FBResponseWithUnknownError(error);
   }
   return FBResponseWithOK();
 }
@@ -225,7 +262,7 @@
 {
   NSError *error;
   if (![XCUIDevice.sharedDevice fb_activateSiriVoiceRecognitionWithText:(id)request.arguments[@"text"] error:&error]) {
-    return FBResponseWithError(error);
+    return FBResponseWithUnknownError(error);
   }
   return FBResponseWithOK();
 }
@@ -233,11 +270,10 @@
 + (id <FBResponsePayload>)handleLaunchUnattachedApp:(FBRouteRequest *)request
 {
   NSString *bundle = (NSString *)request.arguments[@"bundleId"];
-  if ([FBUnattachedAppLauncher launchAppWithBundleId:bundle])
+  if ([FBUnattachedAppLauncher launchAppWithBundleId:bundle]) {
     return FBResponseWithOK();
-  return FBResponseWithError([[[FBErrorBuilder builder]
-                               withDescription:@"LSApplicationWorkspace failed to launch app"]
-                              build]);
+  }
+  return FBResponseWithStatus([FBCommandStatus unknownErrorWithMessage:@"LSApplicationWorkspace failed to launch app" traceback:nil]);
 }
 
 + (id<FBResponsePayload>)handleGetDeviceInfo:(FBRouteRequest *)request
@@ -247,14 +283,51 @@
   // https://developer.apple.com/documentation/foundation/nslocale/1414388-autoupdatingcurrentlocale
   NSString *currentLocale = [[NSLocale autoupdatingCurrentLocale] localeIdentifier];
 
-  return
-  FBResponseWithStatus(
-    FBCommandStatusNoError,
-    @{
-      @"currentLocale": currentLocale,
-      @"timeZone": self.timeZone,
+  return FBResponseWithObject(@{
+    @"currentLocale": currentLocale,
+    @"timeZone": self.timeZone,
+    @"name": UIDevice.currentDevice.name,
+    @"model": UIDevice.currentDevice.model,
+    @"uuid": [UIDevice.currentDevice.identifierForVendor UUIDString] ?: @"unknown",
+    // https://developer.apple.com/documentation/uikit/uiuserinterfaceidiom?language=objc
+    @"userInterfaceIdiom": @(UIDevice.currentDevice.userInterfaceIdiom),
+    @"userInterfaceStyle": self.userInterfaceStyle,
+#if TARGET_OS_SIMULATOR
+    @"isSimulator": @(YES),
+#else
+    @"isSimulator": @(NO),
+#endif
+  });
+}
+
+/**
+ * @return Current user interface style as a string
+ */
++ (NSString *)userInterfaceStyle
+{
+  static id userInterfaceStyle = nil;
+  static dispatch_once_t styleOnceToken;
+  dispatch_once(&styleOnceToken, ^{
+    if ([UITraitCollection respondsToSelector:NSSelectorFromString(@"currentTraitCollection")]) {
+      id currentTraitCollection = [UITraitCollection performSelector:NSSelectorFromString(@"currentTraitCollection")];
+      if (nil != currentTraitCollection) {
+        userInterfaceStyle = [currentTraitCollection valueForKey:@"userInterfaceStyle"];
       }
-    );
+    }
+  });
+
+  if (nil == userInterfaceStyle) {
+    return @"unsupported";
+  }
+
+  switch ([userInterfaceStyle integerValue]) {
+    case 1: // UIUserInterfaceStyleLight
+      return @"light";
+    case 2: // UIUserInterfaceStyleDark
+      return @"dark";
+    default:
+      return @"unknown";
+  }
 }
 
 /**

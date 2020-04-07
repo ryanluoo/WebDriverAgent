@@ -55,12 +55,18 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Returns screenshot
 
- @param rect The actual screen rect. Set it to CGRectNull to get a screenshot of the whole screen.
  @param quality The number in range 0-2, where 2 (JPG) is the lowest and 0 (PNG) is the highest quality.
  @param error If there is an error, upon return contains an NSError object that describes the problem.
  @return Device screenshot as PNG- or JPG-encoded data or nil in case of failure
  */
-- (nullable NSData *)fb_rawScreenshotWithQuality:(NSUInteger)quality rect:(CGRect)rect error:(NSError*__autoreleasing*)error;
+- (nullable NSData *)fb_rawScreenshotWithQuality:(NSUInteger)quality error:(NSError*__autoreleasing*)error;
+
+/**
+Checks if screen shot can be taken using [XCUIScreen.mainScreen screenshotDataForQuality:rect:error:];
+
+@return YES if screen shot can be taken
+*/
++ (BOOL)fb_canScreenshots;
 
 /**
  Returns screenshot
@@ -68,7 +74,6 @@ NS_ASSUME_NONNULL_BEGIN
  @return Device screenshot as PNG-encoded data or nil in case of failure
  */
 - (nullable NSData *)fb_screenshotWithError:(NSError*__autoreleasing*)error;
-+ (BOOL)fb_canScreenshots;
 
 /**
  Returns device current wifi ip4 address

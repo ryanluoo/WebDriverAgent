@@ -11,12 +11,17 @@
 
 #import "XCUIElement+FBUtilities.h"
 #import "FBElementUtils.h"
+#import "FBXCodeCompatibility.h"
 
 @implementation XCUIElement (FBUID)
 
 - (NSString *)fb_uid
 {
-  return self.fb_lastSnapshot.fb_uid;
+  if ([self respondsToSelector:@selector(accessibilityElement)]) {
+    return [FBElementUtils uidWithAccessibilityElement:[self performSelector:@selector(accessibilityElement)]];
+  }
+  XCElementSnapshot *snapshot = [self.query fb_cachedSnapshot] ?: self.fb_lastSnapshot;
+  return snapshot.fb_uid;
 }
 
 @end

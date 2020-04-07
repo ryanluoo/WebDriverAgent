@@ -37,7 +37,7 @@ static NSString *const SETTINGS_BUNDLE_ID = @"com.apple.Preferences";
 {
   [super setUp];
   [self launchApplication];
-  self.session = [FBSession sessionWithApplication:FBApplication.fb_activeApplication];
+  self.session = [FBSession initWithApplication:FBApplication.fb_activeApplication];
 }
 
 - (void)testSettingsAppCanBeOpenedInScopeOfTheCurrentSession
@@ -56,7 +56,6 @@ static NSString *const SETTINGS_BUNDLE_ID = @"com.apple.Preferences";
 
 - (void)testSettingsAppCanBeReopenedInScopeOfTheCurrentSession
 {
-  FBApplication *testedApp = FBApplication.fb_activeApplication;
   [self.session launchApplicationWithBundleId:SETTINGS_BUNDLE_ID
                       shouldWaitForQuiescence:nil
                                     arguments:nil

@@ -4,44 +4,75 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>BytedanceWdaAggregate.xcscheme_^#shared#^_</key>
+		<key>GtfWdaAggregate.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>10</integer>
+		</dict>
+		<key>GtfWdaRunner.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>9</integer>
+		</dict>
+		<key>IntegrationApp.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>0</integer>
+		</dict>
+		<key>IntegrationTests_1.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
+		<key>IntegrationTests_2.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>2</integer>
 		</dict>
-		<key>Bytedance_Wda.xcscheme_^#shared#^_</key>
+		<key>IntegrationTests_3.xcscheme_^#shared#^_</key>
 		<dict>
-			<key>isShown</key>
-			<true/>
 			<key>orderHint</key>
-			<integer>0</integer>
+			<integer>3</integer>
 		</dict>
 		<key>WebDriverAgentLib.xcscheme_^#shared#^_</key>
 		<dict>
-			<key>isShown</key>
-			<true/>
 			<key>orderHint</key>
-			<integer>1</integer>
+			<integer>4</integer>
+		</dict>
+		<key>WebDriverAgentLib_tvOS.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>5</integer>
+		</dict>
+		<key>WebDriverAgentRunner-nodebug.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>7</integer>
+		</dict>
+		<key>WebDriverAgentRunner.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>6</integer>
+		</dict>
+		<key>WebDriverAgentRunner_tvOS.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>8</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>948869FA240690530015C7BF</key>
+		<key>9497E31124337283003864C9</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>EE158A981CBD452B00A3E3F0</key>
+		<key>9497E323243373E8003864C9</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>EE836C011C0F118600D87246</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>EEF988291C486603005CA669</key>
+		<key>9497E33524337949003864C9</key>
 		<dict>
 			<key>primary</key>
 			<true/>
