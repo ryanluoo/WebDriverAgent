@@ -7,6 +7,7 @@
  * of patent rights can be found in the PATENTS file in the same directory.
  */
 
+#import <UIKit/UIKit.h>
 #import "FBLogger.h"
 
 #import "FBConfiguration.h"
@@ -22,9 +23,12 @@
 {
   va_list args;
   va_start(args, format);
-//  NSLogv(format, args);
-  NSString * message = [[NSString alloc] initWithFormat:format arguments:args];
-  printf("%s\n", [message cStringUsingEncoding:NSUTF8StringEncoding]);
+  if ([UIDevice currentDevice].systemVersion.doubleValue >= 11.0) {
+    NSLogv(format, args);
+  } else {
+    NSString * message = [[NSString alloc] initWithFormat:format arguments:args];
+    printf("%s\n", [message cStringUsingEncoding:NSUTF8StringEncoding]);
+  }
   va_end(args);
 }
 
