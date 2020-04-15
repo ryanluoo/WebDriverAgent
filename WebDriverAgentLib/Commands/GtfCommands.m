@@ -26,6 +26,7 @@
     [[FBRoute GET:@"/gtf/window/size"].withoutSession respondWithTarget:self action:@selector(handleWindowSize:)],
     [[FBRoute GET:@"/gtf/password/status"].withoutSession respondWithTarget:self action:@selector(handlePasswordStatus:)],
     [[FBRoute POST:@"/gtf/album/*"].withoutSession respondWithTarget:self action:@selector(handleAlbumAdd:)],
+    [[FBRoute DELETE:@"/gtf/app/*"].withoutSession respondWithTarget:self action:@selector(killApp:)],
   ];
 }
 
@@ -126,6 +127,25 @@ BOOL haveAlbumAuthorization() {
   else {
     return FBResponseWithObject(@NO);
   }
+}
+
++ (id<FBResponsePayload>)killApp:(FBRouteRequest *)request{
+  NSString *bundleId = request.URL.lastPathComponent;
+  [FBLogger logFmt:@"Kill app with bundle id: %@", bundleId];
+  FBApplication *targetApp = nil;
+  if ([bundleId isEqualToString:@"current"]) {
+    FBApplication *currentApp = FBApplication.fb_activeApplication;
+    if (![currentApp.bundleID isEqualToString:@"com.apple.springboard"]) {
+      targetApp = currentApp;
+    }
+  } else {
+    targetApp = [[FBApplication alloc] initWithBundleIdentifier:bundleId];
+  }
+  
+  if (targetApp) {
+    [targetApp terminate];
+  }
+  return FBResponseWithOK();
 }
 
 @end
