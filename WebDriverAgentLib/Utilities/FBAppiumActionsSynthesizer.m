@@ -374,7 +374,7 @@ static const double FB_LONG_TAP_DURATION_MS = 600.0;
   for (NSDictionary<NSString *, id> *touchItem in [touchActionItems reverseObjectEnumerator]) {
     id actionItemName = [touchItem objectForKey:FB_ACTION_KEY];
     if ([actionItemName isKindOfClass:NSString.class] && [actionItemName isEqualToString:FB_ACTION_CANCEL]) {
-      shouldSkipNextItem = YES;;
+      shouldSkipNextItem = YES;
       continue;
     }
     if (shouldSkipNextItem) {
