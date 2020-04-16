@@ -16,7 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 @interface XCUIElement (FBUtilities)
 
 /**
- Waits for receiver's frame to become stable with timeout
+ Waits for receiver's frame to become stable with the default timeout
+
+ @return Whether the frame is stable
  */
 - (BOOL)fb_waitUntilFrameIsStable;
 
@@ -27,6 +29,15 @@ NS_ASSUME_NONNULL_BEGIN
  @return The recent snapshot of the element
  */
 - (XCElementSnapshot *)fb_lastSnapshot;
+
+/**
+ Gets the cached snapshot of the current element. nil
+ is returned if either no cached element snapshot could be retrived
+ or if the feature is not supported.
+
+@return The cached snapshot of the element
+*/
+- (nullable XCElementSnapshot *)fb_cachedSnapshot;
 
 /**
  Gets the most recent snapshot of the current element and already resolves the accessibility attributes
@@ -80,6 +91,14 @@ NS_ASSUME_NONNULL_BEGIN
  @return YES if wait succeeded ortherwise NO if there is still some active animation in progress
 */
 - (BOOL)fb_waitUntilSnapshotIsStable;
+
+/**
+ Waits for receiver's snapshot to become stable with the given timeout
+
+ @param timeout The max time to wait util the snapshot is stable
+ @return Whether the snapshot is stiable after the timeout
+*/
+- (BOOL)fb_waitUntilSnapshotIsStableWithTimeout:(NSTimeInterval)timeout;
 
 /**
  Returns screenshot of the particular element
