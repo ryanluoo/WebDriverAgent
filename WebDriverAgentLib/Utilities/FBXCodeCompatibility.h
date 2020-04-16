@@ -8,6 +8,7 @@
  */
 
 #import <WebDriverAgentLib/WebDriverAgentLib.h>
+#import "XCPointerEvent.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -77,10 +78,19 @@ extern NSString *const FBApplicationMethodNotSupportedException;
 
 @end
 
+
+@interface XCPointerEvent (FBCompatibility)
+
+- (BOOL)fb_areKeyEventsSupported;
+
+@end
+
+
 @interface XCUIElement (FBCompatibility)
 
 /**
  Enforces snapshot resolution of the destination element
+ TODO: Deprecate and remove this helper after Xcode10 support is dropped
  */
 - (void)fb_nativeResolve;
 
