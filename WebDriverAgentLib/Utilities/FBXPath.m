@@ -10,9 +10,12 @@
 #import "FBXPath.h"
 
 #import "FBConfiguration.h"
+#import "FBExceptions.h"
 #import "FBLogger.h"
 #import "NSString+FBXMLSafeString.h"
+#import "XCElementSnapshot+FBHelpers.h"
 #import "XCUIElement.h"
+#import "XCUIElement+FBCaching.h"
 #import "XCUIElement+FBUtilities.h"
 #import "XCUIElement+FBWebDriverAttributes.h"
 #import "XCTestPrivateSymbols.h"
@@ -23,8 +26,6 @@
 @property (nonatomic, readonly) id<FBElement> element;
 
 + (nonnull NSString *)name;
-// Single WDA attribute might require multiple XCTest attributes to be resolved
-+ (NSArray<NSString *> *)internalNames;
 + (nullable NSString *)valueForElement:(id<FBElement>)element;
 
 + (int)recordWithWriter:(xmlTextWriterPtr)writer forElement:(id<FBElement>)element;
@@ -79,6 +80,10 @@
 
 @interface FBIndexAttribute : FBElementAttribute
 
+@end
+
+@interface FBInternalIndexAttribute : FBElementAttribute
+
 @property (nonatomic, nonnull, readonly) NSString* indexValue;
 
 + (int)recordWithWriter:(xmlTextWriterPtr)writer forValue:(NSString *)value;
@@ -97,8 +102,6 @@ const static char *_UTF8Encoding = "UTF-8";
 
 static NSString *const kXMLIndexPathKey = @"private_indexPath";
 static NSString *const topNodeIndexPath = @"top";
-NSString *const FBInvalidXPathException = @"FBInvalidXPathException";
-NSString *const FBXPathQueryEvaluationException = @"FBXPathQueryEvaluationException";
 
 @implementation FBXPath
 
@@ -331,7 +334,7 @@ NSString *const FBXPathQueryEvaluationException = @"FBXPathQueryEvaluationExcept
 
   if (nil != indexPath) {
     // index path is the special case
-    return [FBIndexAttribute recordWithWriter:writer forValue:indexPath];
+    return [FBInternalIndexAttribute recordWithWriter:writer forValue:indexPath];
   }
   return 0;
 }
@@ -348,46 +351,16 @@ NSString *const FBXPathQueryEvaluationException = @"FBXPathQueryEvaluationExcept
   NSArray<XCElementSnapshot *> *children;
   if ([root isKindOfClass:XCUIElement.class]) {
     XCUIElement *element = (XCUIElement *)root;
-    NSMutableArray<NSString *> *snapshotAttributes = [NSMutableArray array];
-    if (nil != includedAttributes) {
-      for (Class includedAttribute in includedAttributes) {
-        [snapshotAttributes addObjectsFromArray:[includedAttribute performSelector:@selector(internalNames)]];
-      }
-      // Element types should always be there to build XML tree nodes
-      // Duplicates in this array are OK, since insternally it is anyway
-      // flattened to a set
-      [snapshotAttributes addObject:FB_ElementTypeAttributeName];
-    }
-    if ([snapshotAttributes containsObject:FB_XCAXAIsVisibleAttributeName]
-        || 0 == snapshotAttributes.count) {
+    NSMutableArray<NSString *> *snapshotAttributes = [NSMutableArray arrayWithArray:FBStandardAttributeNames()];
+    if (nil == includedAttributes || [includedAttributes containsObject:FBVisibleAttribute.class]) {
+      [snapshotAttributes addObject:FB_XCAXAIsVisibleAttributeName];
       // If the app is not idle state while we retrieve the visiblity state
       // then the snapshot retrieval operation might freeze and time out
-      [element.application fb_waitUntilSnapshotIsStable];
+      [element.application fb_waitUntilStableWithTimeout:FBConfiguration.animationCoolOffTimeout];
     }
-    if ([root isKindOfClass:XCUIApplication.class]) {
-      currentSnapshot = element.fb_cachedSnapshot ?: element.fb_lastSnapshot;
-      NSArray<XCUIElement *> *windows = [element fb_filterDescendantsWithSnapshots:currentSnapshot.children
-                                                                           selfUID:currentSnapshot.wdUID
-                                                                      onlyChildren:YES];
-      NSMutableArray<XCElementSnapshot *> *windowsSnapshots = [NSMutableArray array];
-      for (XCUIElement* window in windows) {
-        XCElementSnapshot *windowSnapshot = 0 == snapshotAttributes.count
-          ? window.fb_snapshotWithAllAttributes
-          : [window fb_snapshotWithAttributes:snapshotAttributes.copy];
-        if (nil == windowSnapshot) {
-          [FBLogger logFmt:@"Skipping source dump for '%@' because its snapshot cannot be resolved", window.description];
-          continue;
-        }
-        [windowsSnapshots addObject:windowSnapshot];
-      }
-      // This is necessary because web views are not visible in the native page source otherwise
-      children = windowsSnapshots.copy;
-    } else {
-      currentSnapshot = 0 == snapshotAttributes.count
-        ? element.fb_snapshotWithAllAttributes
-        : [element fb_snapshotWithAttributes:snapshotAttributes.copy];
-      children = currentSnapshot.children;
-    }
+    currentSnapshot = [element fb_snapshotWithAttributes:snapshotAttributes.copy
+                                                maxDepth:nil];
+    children = currentSnapshot.children;
   } else {
     currentSnapshot = (XCElementSnapshot *)root;
     children = currentSnapshot.children;
@@ -457,11 +430,6 @@ static NSString *const FBAbstractMethodInvocationException = @"AbstractMethodInv
   @throw [NSException exceptionWithName:FBAbstractMethodInvocationException reason:errMsg userInfo:nil];
 }
 
-+ (NSArray<NSString *> *)internalNames
-{
-  return @[];
-}
-
 + (NSString *)valueForElement:(id<FBElement>)element
 {
   NSString *errMsg = [NSString stringWithFormat:@"The abstract method -(NSString *)value is expected to be overriden by %@", NSStringFromClass(self.class)];
@@ -498,7 +466,9 @@ static NSString *const FBAbstractMethodInvocationException = @"AbstractMethodInv
            FBXAttribute.class,
            FBYAttribute.class,
            FBWidthAttribute.class,
-           FBHeightAttribute.class];
+           FBHeightAttribute.class,
+           FBIndexAttribute.class,
+          ];
 }
 
 @end
@@ -508,11 +478,6 @@ static NSString *const FBAbstractMethodInvocationException = @"AbstractMethodInv
 + (NSString *)name
 {
   return @"type";
-}
-
-+ (NSArray<NSString *> *)internalNames
-{
-  return @[FB_ElementTypeAttributeName];
 }
 
 + (NSString *)valueForElement:(id<FBElement>)element
@@ -527,17 +492,6 @@ static NSString *const FBAbstractMethodInvocationException = @"AbstractMethodInv
 + (NSString *)name
 {
   return @"value";
-}
-
-+ (NSArray<NSString *> *)internalNames
-{
-  return @[
-    FB_ElementTypeAttributeName,
-    FB_ValueAttributeName,
-    FB_LabelAttributeName,
-    FB_PlaceholderValueAttributeName,
-    FB_SelectedAttributeName
-  ];
 }
 
 + (NSString *)valueForElement:(id<FBElement>)element
@@ -560,14 +514,6 @@ static NSString *const FBAbstractMethodInvocationException = @"AbstractMethodInv
   return @"name";
 }
 
-+ (NSArray<NSString *> *)internalNames
-{
-  return @[
-    FB_IdentifierAttributeName,
-    FB_LabelAttributeName
-  ];
-}
-
 + (NSString *)valueForElement:(id<FBElement>)element
 {
   return element.wdName;
@@ -580,14 +526,6 @@ static NSString *const FBAbstractMethodInvocationException = @"AbstractMethodInv
 + (NSString *)name
 {
   return @"label";
-}
-
-+ (NSArray<NSString *> *)internalNames
-{
-  return @[
-    FB_ElementTypeAttributeName,
-    FB_LabelAttributeName
-  ];
 }
 
 + (NSString *)valueForElement:(id<FBElement>)element
@@ -604,13 +542,6 @@ static NSString *const FBAbstractMethodInvocationException = @"AbstractMethodInv
   return @"enabled";
 }
 
-+ (NSArray<NSString *> *)internalNames
-{
-  return @[
-    FB_EnabledAttributeName
-  ];
-}
-
 + (NSString *)valueForElement:(id<FBElement>)element
 {
   return element.wdEnabled ? @"true" : @"false";
@@ -623,13 +554,6 @@ static NSString *const FBAbstractMethodInvocationException = @"AbstractMethodInv
 + (NSString *)name
 {
   return @"visible";
-}
-
-+ (NSArray<NSString *> *)internalNames
-{
-  return @[
-    FB_XCAXAIsVisibleAttributeName
-  ];
 }
 
 + (NSString *)valueForElement:(id<FBElement>)element
@@ -648,13 +572,6 @@ static NSString *const FBAbstractMethodInvocationException = @"AbstractMethodInv
   return @"focused";
 }
 
-+ (NSArray<NSString *> *)internalNames
-{
-  return @[
-    FB_HasFocusAttributeName
-  ];
-}
-
 + (NSString *)valueForElement:(id<FBElement>)element
 {
   return element.wdFocused ? @"true" : @"false";
@@ -669,13 +586,6 @@ static NSString *const FBAbstractMethodInvocationException = @"AbstractMethodInv
 + (NSString *)valueForElement:(id<FBElement>)element
 {
   return [NSString stringWithFormat:@"%@", [element.wdRect objectForKey:[self name]]];
-}
-
-+ (NSArray<NSString *> *)internalNames
-{
-  return @[
-    FB_FrameAttributeName
-  ];
 }
 
 @end
@@ -717,6 +627,20 @@ static NSString *const FBAbstractMethodInvocationException = @"AbstractMethodInv
 @end
 
 @implementation FBIndexAttribute
+
++ (NSString *)name
+{
+  return @"index";
+}
+
++ (NSString *)valueForElement:(id<FBElement>)element
+{
+  return [NSString stringWithFormat:@"%lu", element.wdIndex];
+}
+
+@end
+
+@implementation FBInternalIndexAttribute
 
 + (NSString *)name
 {

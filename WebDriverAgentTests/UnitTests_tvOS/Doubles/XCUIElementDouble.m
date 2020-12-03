@@ -27,6 +27,7 @@
     self.wdAccessible = YES;
     self.wdEnabled = YES;
     self.wdSelected = YES;
+    self.wdIndex = 0;
 #if TARGET_OS_TV
     self.wdFocused = YES;
 #endif
@@ -49,9 +50,9 @@
   return @"test";
 }
 
-- (id)fb_cachedSnapshot
+- (id)fb_takeSnapshot
 {
-  return nil;
+  return [self lastSnapshot];
 }
 
 - (void)resolve
